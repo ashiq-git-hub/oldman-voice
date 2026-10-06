@@ -55,12 +55,13 @@ export default function DustParticles() {
       "120, 108, 92",  // Delicate parchment fiber
       "68, 62, 54",    // Charcoal dust speck
       "162, 140, 100", // Faint sunlit dust mote
+      "135, 115, 78",  // Antique gold dust
     ];
 
-    // Compute particle count — lush, dense field of small dots across the canvas
+    // Compute particle count — rich, ultra-dense field of small dust dots
     const getParticleCount = () => {
       const area = window.innerWidth * window.innerHeight;
-      return Math.min(Math.max(Math.floor(area / 1200), 450), 1200);
+      return Math.min(Math.max(Math.floor(area / 700), 800), 2400);
     };
 
     let particles: Particle[] = [];
@@ -70,9 +71,9 @@ export default function DustParticles() {
       const count = getParticleCount();
       particles = [];
       for (let i = 0; i < count; i++) {
-        // Extra small in size (tiny delicate pinpoints)
-        const radius = 0.28 + Math.random() * 0.62; // ~0.28px to 0.90px
-        const baseAlpha = 0.12 + Math.random() * 0.25; // Subtle, elegant opacity
+        // Ultra-small micro pinpoints so high volume stays delicate and readable
+        const radius = 0.22 + Math.random() * 0.58; // ~0.22px to 0.80px
+        const baseAlpha = 0.11 + Math.random() * 0.24; // Soft, ambient opacity
         const baseVx = (Math.random() - 0.5) * 0.16;
         const baseVy = -0.04 - Math.random() * 0.12; // Slow upward thermal float
 
@@ -120,20 +121,20 @@ export default function DustParticles() {
       mouse.x = currentX;
       mouse.y = currentY;
 
-      // Spawn subtle extra micro-dust motes as cursor glides or drags across the page
+      // Spawn extra micro-dust motes as cursor glides or drags across the page
       if (
-        (mouse.isDown || mouse.speed > 2.5) &&
-        trailMotes.length < 120 &&
-        Math.random() < (mouse.isDown ? 0.75 : 0.5)
+        (mouse.isDown || mouse.speed > 2) &&
+        trailMotes.length < 160 &&
+        Math.random() < (mouse.isDown ? 0.85 : 0.55)
       ) {
         const angle = Math.random() * Math.PI * 2;
         const speed = 0.2 + Math.random() * 0.6;
         trailMotes.push({
-          x: currentX + (Math.random() - 0.5) * 10,
-          y: currentY + (Math.random() - 0.5) * 10,
+          x: currentX + (Math.random() - 0.5) * 12,
+          y: currentY + (Math.random() - 0.5) * 12,
           vx: Math.cos(angle) * speed,
           vy: Math.sin(angle) * speed - 0.08,
-          radius: 0.35 + Math.random() * 0.5,
+          radius: 0.25 + Math.random() * 0.45,
           alpha: 0.32,
           life: 0,
           maxLife: 40 + Math.floor(Math.random() * 35),
@@ -223,7 +224,7 @@ export default function DustParticles() {
       mouse.speed *= 0.92;
 
       // Interaction radius for the cloud of dust particles
-      const interactRadius = mouse.isDown ? 165 : 125;
+      const interactRadius = mouse.isDown ? 175 : 130;
       const interactRadiusSq = interactRadius * interactRadius;
 
       for (let i = 0; i < particles.length; i++) {
@@ -232,7 +233,7 @@ export default function DustParticles() {
         if (!prefersReducedMotion) {
           // Subtle natural breathing pulse in opacity
           p.pulsePhase += p.pulseSpeed;
-          p.alpha = p.baseAlpha + Math.sin(p.pulsePhase) * 0.06;
+          p.alpha = p.baseAlpha + Math.sin(p.pulsePhase) * 0.05;
 
           // Gentle ambient float
           p.x += p.vx;
@@ -253,8 +254,8 @@ export default function DustParticles() {
               const dirY = dy / dist;
 
               // Gentle tangential swirl as if stirring air over notebook
-              const swirlX = -dirY * 0.28;
-              const swirlY = dirX * 0.28;
+              const swirlX = -dirY * 0.3;
+              const swirlY = dirX * 0.3;
 
               const impulse = (mouse.isDown ? 1.7 : 1.05) + Math.min(mouse.speed * 0.04, 1.3);
 
