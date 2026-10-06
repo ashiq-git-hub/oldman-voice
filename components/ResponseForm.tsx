@@ -102,7 +102,7 @@ export default function ResponseForm({ questionId }: ResponseFormProps) {
           {/* Understated bottom status bar */}
           <div className="mt-3 pt-2.5 sm:mt-4 sm:pt-3 border-t border-rule/50 flex items-center justify-between text-[11px] sm:text-xs text-ink-faint font-sans">
             <span className="tracking-wider">
-              {currentLength > 0 ? `${currentLength} / ${charLimit}` : "strictly anonymous"}
+              {currentLength > 0 ? `${currentLength} / ${charLimit}` : ""}
             </span>
 
             {currentLength > 1800 && (

@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import { Cormorant_Garamond, Inter } from "next/font/google";
+import DustParticles from "@/components/DustParticles";
 import "./globals.css";
 
 const serifFont = Cormorant_Garamond({
@@ -50,7 +51,7 @@ export const metadata: Metadata = {
 };
 
 export const viewport: Viewport = {
-  themeColor: "#F4F0E7",
+  themeColor: "#F4EFE6",
   width: "device-width",
   initialScale: 1,
   maximumScale: 5,
@@ -63,8 +64,11 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" className={`${serifFont.variable} ${sansFont.variable}`}>
-      <body className="paper-texture font-sans antialiased text-ink min-h-screen flex flex-col selection:bg-brass-light/30 selection:text-ink">
-        {children}
+      <body className="paper-texture font-sans antialiased text-ink min-h-screen flex flex-col selection:bg-brass-light/30 selection:text-ink relative overflow-x-hidden">
+        <DustParticles />
+        <div className="relative z-10 flex-1 flex flex-col">
+          {children}
+        </div>
       </body>
     </html>
   );

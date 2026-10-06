@@ -18,7 +18,7 @@ export default function Header() {
             oldman.voice
           </span>
           <span className="text-[9px] sm:text-[10px] tracking-[0.2em] uppercase text-ink-muted mt-0.5 font-sans">
-            daily private correspondence
+            daily reflections
           </span>
         </Link>
 

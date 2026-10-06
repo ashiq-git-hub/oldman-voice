@@ -3,7 +3,7 @@
 @tailwind utilities;
 
 :root {
-  --bg-parchment: #F4F0E7;
+  --bg-parchment: #F4EFE6;
   --bg-parchment-soft: #FAF7F0;
   --text-ink: #1E1D1A;
   --text-muted: #66635A;
@@ -27,16 +27,16 @@ body {
   min-height: 100vh;
   display: flex;
   flex-direction: column;
-  background-color: #F4F0E7;
+  background-color: #F4EFE6;
   color: #1E1D1A;
 }
 
 /* Subtle organic paper grain overlay */
 .paper-texture {
-  background-color: #F4F0E7;
-  background-image: radial-gradient(#d5ccb6 0.65px, transparent 0.65px), radial-gradient(#d5ccb6 0.65px, #F4F0E7 0.65px);
-  background-size: 26px 26px;
-  background-position: 0 0, 13px 13px;
+  background-color: #F4EFE6;
+  background-image: radial-gradient(#d3c9b2 0.65px, transparent 0.65px), radial-gradient(#d3c9b2 0.65px, #F4EFE6 0.65px);
+  background-size: 28px 28px;
+  background-position: 0 0, 14px 14px;
   background-attachment: fixed;
 }
 
@@ -61,7 +61,7 @@ body {
   background-color: #FAF7F0;
   border: 1px solid #E5DEC9;
   box-shadow: 0 4px 20px -2px rgba(30, 29, 26, 0.03), 0 1px 3px rgba(30, 29, 26, 0.02);
-  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+  transition: border-color 0.25s ease, box-shadow 0.25s ease, transform 0.25s ease;
 }
 
 .stationery-box:focus-within {
@@ -80,12 +80,36 @@ body {
   min-height: 44px; /* Optimal mobile touch target */
 }
 
+.vintage-btn:hover {
+  transform: translateY(-1px);
+}
+
 .vintage-btn:hover .arrow-icon {
   transform: translateX(4px);
 }
 
+.vintage-btn:active {
+  transform: translateY(0);
+}
+
 .arrow-icon {
   transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* Minimal subtle animations */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fade-in {
+  animation: fadeIn 0.55s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
 
 /* Custom minimal scrollbar */
@@ -95,7 +119,7 @@ body {
 }
 
 ::-webkit-scrollbar-track {
-  background: #F4F0E7;
+  background: #F4EFE6;
 }
 
 ::-webkit-scrollbar-thumb {

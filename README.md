@@ -134,7 +134,7 @@ In Vercel, navigate to **Project Settings > Domains** and add your custom domain
 1. Open the public production website on your mobile device (e.g. 390px viewport) or desktop.
 2. Read today's question.
 3. Type an answer in the stationery box and tap **send anonymously →**.
-4. Verify the subtle microcopy: *"placing your words..."* followed by *"It's somewhere now. Thank you for saying it."*
+4. Verify the subtle microcopy: *"placing your words..."* followed by *"Your words have been placed. Thank you for saying it."*
 5. Refresh the browser and observe that your submitted answer is **never displayed** publicly.
 
 ### Step 12: Test Admin Access
@@ -173,7 +173,7 @@ In Vercel, navigate to **Project Settings > Domains** and add your custom domain
   - ❌ *"Comments (0)"*
   - ❌ *"Follow us on socials"*
 - Favor calm, literary, reflective phrasing:
-  - 🌿 *"It's somewhere now."*
+  - 🌿 *"Your words have been placed."*
   - 🌿 *"Thank you for saying it."*
   - 🌿 *"Today's question is still being written."*
   - 🌿 *"placing your words..."*

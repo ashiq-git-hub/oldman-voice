@@ -91,7 +91,7 @@ export async function POST(req: NextRequest) {
     return NextResponse.json(
       {
         success: true,
-        message: "It's somewhere now.",
+        message: "Your words have been placed.",
       },
       { status: 201 }
     );

@@ -8,7 +8,7 @@ export default function SubmissionSuccess({ onReset }: SubmissionSuccessProps) {
       <div className="w-10 h-px bg-brass mx-auto mb-8 opacity-70" />
 
       <h2 className="font-serif text-3xl sm:text-4xl text-ink font-normal mb-3 tracking-tight">
-        It&apos;s somewhere now.
+        Your words have been placed.
       </h2>
 
       <p className="font-serif italic text-lg sm:text-xl text-ink-muted mb-10">

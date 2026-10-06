@@ -54,8 +54,6 @@ export default function AdminResponseCard({
 
           <div className="mt-3 flex items-center gap-3 text-[11px] text-ink-faint font-sans uppercase tracking-wider">
             <span>received at {formattedTime}</span>
-            <span>·</span>
-            <span className="text-olive">strictly anonymous</span>
           </div>
         </div>
 
