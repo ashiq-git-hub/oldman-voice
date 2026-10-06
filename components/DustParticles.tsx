@@ -71,9 +71,24 @@ export default function DustParticles() {
       const count = getParticleCount();
       particles = [];
       for (let i = 0; i < count; i++) {
-        // Ultra-small micro pinpoints so high volume stays delicate and readable
-        const radius = 0.22 + Math.random() * 0.58; // ~0.22px to 0.80px
-        const baseAlpha = 0.11 + Math.random() * 0.24; // Soft, ambient opacity
+        // Random varied sizes: diverse mix of micro specks, medium dots, and larger floating motes
+        const rand = Math.random();
+        let radius: number;
+        let baseAlpha: number;
+
+        if (rand < 0.58) {
+          // Tiny micro-specks (~0.28px - 0.75px)
+          radius = 0.28 + Math.random() * 0.47;
+          baseAlpha = 0.11 + Math.random() * 0.20;
+        } else if (rand < 0.88) {
+          // Medium noticeable dust motes (~0.85px - 1.65px)
+          radius = 0.85 + Math.random() * 0.80;
+          baseAlpha = 0.16 + Math.random() * 0.24;
+        } else {
+          // Bigger, prominent floating motes (~1.75px - 2.85px)
+          radius = 1.75 + Math.random() * 1.10;
+          baseAlpha = 0.20 + Math.random() * 0.26;
+        }
         const baseVx = (Math.random() - 0.5) * 0.16;
         const baseVy = -0.04 - Math.random() * 0.12; // Slow upward thermal float
 
@@ -134,7 +149,7 @@ export default function DustParticles() {
           y: currentY + (Math.random() - 0.5) * 12,
           vx: Math.cos(angle) * speed,
           vy: Math.sin(angle) * speed - 0.08,
-          radius: 0.25 + Math.random() * 0.45,
+          radius: Math.random() < 0.65 ? 0.35 + Math.random() * 0.55 : 1.15 + Math.random() * 0.95,
           alpha: 0.32,
           life: 0,
           maxLife: 40 + Math.floor(Math.random() * 35),
