@@ -48,18 +48,19 @@ export default function DustParticles() {
     let width = (canvas.width = window.innerWidth);
     let height = (canvas.height = window.innerHeight);
 
-    // Warm vintage tones matching old notebook paper and archival ink
+    // Warm vintage tones matching old notebook paper, dried ink, and brass
     const colors = [
-      "102, 90, 75",   // Warm aged ink
-      "154, 131, 88",  // Subtle brass / golden parchment speck
-      "125, 112, 95",  // Vintage sepia paper dust
-      "75, 70, 62",    // Fine charcoal dust
+      "95, 82, 68",    // Vintage warm ink fleck
+      "148, 126, 84",  // Soft aged brass speck
+      "120, 108, 92",  // Delicate parchment fiber
+      "68, 62, 54",    // Charcoal dust speck
+      "162, 140, 100", // Faint sunlit dust mote
     ];
 
-    // Compute particle count based on viewport area (minimal and clean)
+    // Compute particle count — generous density for small dots across the canvas
     const getParticleCount = () => {
       const area = window.innerWidth * window.innerHeight;
-      return Math.min(Math.max(Math.floor(area / 22000), 40), 75);
+      return Math.min(Math.max(Math.floor(area / 7500), 95), 230);
     };
 
     let particles: Particle[] = [];
@@ -69,10 +70,11 @@ export default function DustParticles() {
       const count = getParticleCount();
       particles = [];
       for (let i = 0; i < count; i++) {
-        const radius = 0.75 + Math.random() * 1.05; // Small, delicate specks
-        const baseAlpha = 0.18 + Math.random() * 0.22; // Low, graceful opacity
-        const baseVx = (Math.random() - 0.5) * 0.18;
-        const baseVy = -0.06 - Math.random() * 0.14; // Gentle upward/ambient thermal drift
+        // Extra small in size (tiny delicate pinpoints)
+        const radius = 0.35 + Math.random() * 0.65; // ~0.35px to 1.0px
+        const baseAlpha = 0.14 + Math.random() * 0.24; // Subtle, elegant opacity
+        const baseVx = (Math.random() - 0.5) * 0.16;
+        const baseVy = -0.04 - Math.random() * 0.12; // Slow upward thermal float
 
         particles.push({
           x: Math.random() * width,
@@ -101,7 +103,6 @@ export default function DustParticles() {
       prevY: -9999,
       speed: 0,
       isDown: false,
-      lastMoveTime: 0,
     };
 
     const handlePointerMove = (e: MouseEvent | Touch) => {
@@ -118,25 +119,24 @@ export default function DustParticles() {
       mouse.prevY = mouse.y;
       mouse.x = currentX;
       mouse.y = currentY;
-      mouse.lastMoveTime = performance.now();
 
-      // Occasionally spawn a delicate dust mote as cursor moves or drags across paper
+      // Spawn subtle extra micro-dust motes as cursor glides or drags across the page
       if (
-        (mouse.isDown || mouse.speed > 5) &&
-        trailMotes.length < 25 &&
-        Math.random() < (mouse.isDown ? 0.45 : 0.22)
+        (mouse.isDown || mouse.speed > 3) &&
+        trailMotes.length < 55 &&
+        Math.random() < (mouse.isDown ? 0.55 : 0.32)
       ) {
         const angle = Math.random() * Math.PI * 2;
         const speed = 0.2 + Math.random() * 0.6;
         trailMotes.push({
-          x: currentX + (Math.random() - 0.5) * 8,
-          y: currentY + (Math.random() - 0.5) * 8,
+          x: currentX + (Math.random() - 0.5) * 10,
+          y: currentY + (Math.random() - 0.5) * 10,
           vx: Math.cos(angle) * speed,
-          vy: Math.sin(angle) * speed - 0.1,
-          radius: 0.7 + Math.random() * 0.8,
-          alpha: 0.35,
+          vy: Math.sin(angle) * speed - 0.08,
+          radius: 0.35 + Math.random() * 0.5,
+          alpha: 0.32,
           life: 0,
-          maxLife: 45 + Math.floor(Math.random() * 35),
+          maxLife: 40 + Math.floor(Math.random() * 35),
           rgb: colors[Math.floor(Math.random() * colors.length)],
         });
       }
@@ -215,7 +215,6 @@ export default function DustParticles() {
     const render = (now: number) => {
       if (!isVisible) return;
 
-      const elapsed = Math.min((now - lastTimestamp) / 1000, 0.1);
       lastTimestamp = now;
 
       ctx.clearRect(0, 0, width, height);
@@ -223,8 +222,8 @@ export default function DustParticles() {
       // Decay mouse speed gradually
       mouse.speed *= 0.92;
 
-      // Update & render main ambient dust particles
-      const interactRadius = mouse.isDown ? 140 : 100;
+      // Interaction radius for the cloud of dust particles
+      const interactRadius = mouse.isDown ? 150 : 115;
       const interactRadiusSq = interactRadius * interactRadius;
 
       for (let i = 0; i < particles.length; i++) {
@@ -233,7 +232,7 @@ export default function DustParticles() {
         if (!prefersReducedMotion) {
           // Subtle natural breathing pulse in opacity
           p.pulsePhase += p.pulseSpeed;
-          p.alpha = p.baseAlpha + Math.sin(p.pulsePhase) * 0.08;
+          p.alpha = p.baseAlpha + Math.sin(p.pulsePhase) * 0.06;
 
           // Gentle ambient float
           p.x += p.vx;
@@ -247,7 +246,6 @@ export default function DustParticles() {
 
             if (distSq < interactRadiusSq && distSq > 0.01) {
               const dist = Math.sqrt(distSq);
-              // Smooth cubic easing for non-jarring gentle push
               const normDist = 1 - dist / interactRadius;
               const force = normDist * normDist;
 
@@ -255,10 +253,10 @@ export default function DustParticles() {
               const dirY = dy / dist;
 
               // Gentle tangential swirl as if stirring air over notebook
-              const swirlX = -dirY * 0.25;
-              const swirlY = dirX * 0.25;
+              const swirlX = -dirY * 0.28;
+              const swirlY = dirX * 0.28;
 
-              const impulse = (mouse.isDown ? 1.8 : 1.1) + Math.min(mouse.speed * 0.04, 1.2);
+              const impulse = (mouse.isDown ? 1.7 : 1.05) + Math.min(mouse.speed * 0.04, 1.3);
 
               p.vx += (dirX + swirlX) * force * impulse;
               p.vy += (dirY + swirlY) * force * impulse;
@@ -270,17 +268,17 @@ export default function DustParticles() {
           p.vy = p.vy * 0.94 + p.baseVy * 0.06;
 
           // Seamless edge wrapping with margin
-          if (p.x < -15) p.x = width + 15;
-          else if (p.x > width + 15) p.x = -15;
+          if (p.x < -10) p.x = width + 10;
+          else if (p.x > width + 10) p.x = -10;
 
-          if (p.y < -15) p.y = height + 15;
-          else if (p.y > height + 15) p.y = -15;
+          if (p.y < -10) p.y = height + 10;
+          else if (p.y > height + 10) p.y = -10;
         }
 
         // Render dot
         ctx.beginPath();
         ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
-        ctx.fillStyle = `rgba(${p.rgb}, ${Math.max(p.alpha, 0.08)})`;
+        ctx.fillStyle = `rgba(${p.rgb}, ${Math.max(p.alpha, 0.06)})`;
         ctx.fill();
       }
 
@@ -295,7 +293,7 @@ export default function DustParticles() {
           m.vy *= 0.96;
 
           const progress = m.life / m.maxLife;
-          const alpha = (1 - progress) * 0.35;
+          const alpha = (1 - progress) * 0.32;
 
           if (progress >= 1) {
             trailMotes.splice(i, 1);
