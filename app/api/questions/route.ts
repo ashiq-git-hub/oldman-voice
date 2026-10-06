@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { isCurrentUserAdmin } from "@/lib/auth-check";
-import { validateQuestion } from "@/lib/validation";
+import { validateQuestion, isValidQuestionId } from "@/lib/validation";
 import { createClient, isSupabaseConfigured } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { mockStore, getTodayDateString } from "@/lib/mock-store";
@@ -8,7 +8,7 @@ import { mockStore, getTodayDateString } from "@/lib/mock-store";
 export const dynamic = "force-dynamic";
 
 // GET questions
-export async function GET(req: NextRequest) {
+export async function GET() {
   const isAdmin = await isCurrentUserAdmin();
   const todayStr = getTodayDateString();
 
@@ -33,12 +33,20 @@ export async function GET(req: NextRequest) {
         .order("question_date", { ascending: false });
 
       if (error) {
-        return NextResponse.json({ error: error.message }, { status: 500 });
+        console.error("Questions fetch error:", error);
+        return NextResponse.json({ error: "Failed to load questions." }, { status: 500 });
       }
 
-      // Format response counts
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const formatted = (questions || []).map((q: any) => ({
+      interface QuestionWithCountRow {
+        id: string;
+        question: string;
+        question_date: string;
+        is_active: boolean;
+        created_at: string;
+        responses?: Array<{ count: number }>;
+      }
+
+      const formatted = (questions as unknown as QuestionWithCountRow[]).map((q) => ({
         id: q.id,
         question: q.question,
         question_date: q.question_date,
@@ -58,14 +66,15 @@ export async function GET(req: NextRequest) {
         .order("question_date", { ascending: false });
 
       if (error) {
-        return NextResponse.json({ error: error.message }, { status: 500 });
+        console.error("Public questions fetch error:", error);
+        return NextResponse.json({ error: "Failed to load questions." }, { status: 500 });
       }
 
       return NextResponse.json({ questions: data });
     }
   }
 
-  // Fallback to mock store
+  // Fallback to mock store (development only)
   if (isAdmin) {
     return NextResponse.json({ questions: mockStore.getQuestionsWithCounts() });
   } else {
@@ -85,7 +94,7 @@ export async function POST(req: NextRequest) {
 
   const body = await req.json().catch(() => null);
   if (!body) {
-    return NextResponse.json({ error: "Missing body." }, { status: 400 });
+    return NextResponse.json({ error: "Missing payload." }, { status: 400 });
   }
 
   const { question, question_date } = body;
@@ -97,7 +106,7 @@ export async function POST(req: NextRequest) {
   if (isSupabaseConfigured()) {
     const supabase = createAdminClient() || createClient();
     if (!supabase) {
-      return NextResponse.json({ error: "Database unavailable" }, { status: 500 });
+      return NextResponse.json({ error: "Database unavailable." }, { status: 500 });
     }
 
     const { data, error } = await supabase
@@ -111,7 +120,8 @@ export async function POST(req: NextRequest) {
       .single();
 
     if (error) {
-      return NextResponse.json({ error: error.message }, { status: 400 });
+      console.error("Insert question error:", error);
+      return NextResponse.json({ error: "Unable to save question." }, { status: 400 });
     }
 
     return NextResponse.json({ question: data }, { status: 201 });
@@ -135,6 +145,10 @@ export async function PUT(req: NextRequest) {
   }
 
   const { id, question, question_date, is_active } = body;
+  if (!isValidQuestionId(id)) {
+    return NextResponse.json({ error: "Invalid question ID." }, { status: 400 });
+  }
+
   const validation = validateQuestion(question, question_date);
   if (!validation.valid) {
     return NextResponse.json({ error: validation.error }, { status: 400 });
@@ -143,7 +157,7 @@ export async function PUT(req: NextRequest) {
   if (isSupabaseConfigured()) {
     const supabase = createAdminClient() || createClient();
     if (!supabase) {
-      return NextResponse.json({ error: "Database unavailable" }, { status: 500 });
+      return NextResponse.json({ error: "Database unavailable." }, { status: 500 });
     }
 
     const { data, error } = await supabase
@@ -158,7 +172,8 @@ export async function PUT(req: NextRequest) {
       .single();
 
     if (error) {
-      return NextResponse.json({ error: error.message }, { status: 400 });
+      console.error("Update question error:", error);
+      return NextResponse.json({ error: "Unable to update question." }, { status: 400 });
     }
 
     return NextResponse.json({ question: data });
@@ -182,19 +197,20 @@ export async function DELETE(req: NextRequest) {
   const { searchParams } = new URL(req.url);
   const id = searchParams.get("id");
 
-  if (!id) {
-    return NextResponse.json({ error: "Question ID required." }, { status: 400 });
+  if (!id || !isValidQuestionId(id)) {
+    return NextResponse.json({ error: "Valid question ID required." }, { status: 400 });
   }
 
   if (isSupabaseConfigured()) {
     const supabase = createAdminClient() || createClient();
     if (!supabase) {
-      return NextResponse.json({ error: "Database unavailable" }, { status: 500 });
+      return NextResponse.json({ error: "Database unavailable." }, { status: 500 });
     }
 
     const { error } = await supabase.from("questions").delete().eq("id", id);
     if (error) {
-      return NextResponse.json({ error: error.message }, { status: 400 });
+      console.error("Delete question error:", error);
+      return NextResponse.json({ error: "Unable to delete question." }, { status: 400 });
     }
 
     return NextResponse.json({ success: true });

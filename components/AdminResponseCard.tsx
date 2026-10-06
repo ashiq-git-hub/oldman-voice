@@ -84,7 +84,7 @@ export default function AdminResponseCard({
             <button
               type="button"
               onClick={() => setShowConfirm(true)}
-              className="opacity-0 group-hover:opacity-100 transition-opacity text-xs uppercase tracking-archive text-ink-faint hover:text-red-800 p-1"
+              className="opacity-0 group-hover:opacity-100 focus:opacity-100 focus:outline-none focus:ring-1 focus:ring-brass transition-opacity text-xs uppercase tracking-archive text-ink-faint hover:text-red-800 p-1"
               title="Delete this response from archive"
             >
               delete

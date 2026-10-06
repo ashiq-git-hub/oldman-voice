@@ -4,7 +4,7 @@ import { cookies } from "next/headers";
 export const MOCK_ADMIN_COOKIE = "oldman_admin_session";
 
 export async function isCurrentUserAdmin(): Promise<boolean> {
-  // If Supabase is configured, verify via Supabase Auth
+  // If Supabase is configured, verify via Supabase Auth session
   if (isSupabaseConfigured()) {
     try {
       const supabase = createClient();
@@ -24,7 +24,12 @@ export async function isCurrentUserAdmin(): Promise<boolean> {
     }
   }
 
-  // Fallback mode for local development: check mock admin cookie
+  // Strictly block mock session in production environments
+  if (process.env.NODE_ENV === "production") {
+    return false;
+  }
+
+  // Fallback mode for local development only: check mock admin cookie
   const cookieStore = cookies();
   const mockSession = cookieStore.get(MOCK_ADMIN_COOKIE);
   return Boolean(mockSession && mockSession.value === "authenticated");

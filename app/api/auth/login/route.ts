@@ -1,22 +1,47 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createClient, isSupabaseConfigured } from "@/lib/supabase/server";
 import { MOCK_ADMIN_COOKIE } from "@/lib/auth-check";
+import { checkRateLimit } from "@/lib/rate-limit";
 import { cookies } from "next/headers";
 
 export const dynamic = "force-dynamic";
 
 export async function POST(req: NextRequest) {
   try {
+    // 1. Rate limiting on login attempts to prevent brute-force attacks
+    const forwardHeader = req.headers.get("x-forwarded-for") || "local-client";
+    const clientRef = forwardHeader.split(",")[0].trim();
+    const rateLimit = checkRateLimit(`login:${clientRef}`, 5, 60000); // 5 attempts per minute max
+
+    if (!rateLimit.allowed) {
+      return NextResponse.json(
+        { error: "Too many login attempts. Please wait a moment before trying again." },
+        { status: 429 }
+      );
+    }
+
+    // 2. Parse payload with size guard
+    const contentLength = Number(req.headers.get("content-length") || 0);
+    if (contentLength > 5120) {
+      return NextResponse.json({ error: "Payload too large." }, { status: 413 });
+    }
+
     const body = await req.json().catch(() => null);
-    if (!body) {
+    if (!body || typeof body !== "object") {
       return NextResponse.json({ error: "Invalid credentials format." }, { status: 400 });
     }
 
     const { email, password } = body;
-    if (!email || !password) {
+    if (
+      typeof email !== "string" ||
+      typeof password !== "string" ||
+      !email.trim() ||
+      !password
+    ) {
       return NextResponse.json({ error: "Email and password are required." }, { status: 400 });
     }
 
+    // 3. Supabase Auth Verification
     if (isSupabaseConfigured()) {
       const supabase = createClient();
       if (!supabase) {
@@ -30,7 +55,7 @@ export async function POST(req: NextRequest) {
 
       if (error || !data.user) {
         return NextResponse.json(
-          { error: error?.message || "Invalid archive credentials." },
+          { error: "Invalid archive credentials." },
           { status: 401 }
         );
       }
@@ -38,26 +63,26 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ success: true });
     }
 
-    // Local Development Fallback:
-    // Accept default owner credentials if Supabase credentials are not yet configured
-    if (
-      email.trim().toLowerCase() === "owner@oldman.voice" ||
-      email.trim().toLowerCase() === "admin@oldman.voice" ||
-      email.includes("@")
-    ) {
-      const cookieStore = cookies();
-      cookieStore.set(MOCK_ADMIN_COOKIE, "authenticated", {
-        path: "/",
-        httpOnly: true,
-        secure: process.env.NODE_ENV === "production",
-        sameSite: "lax",
-        maxAge: 60 * 60 * 24 * 7, // 7 days
-      });
+    // 4. Local Development Fallback (Strictly prohibited in production)
+    if (process.env.NODE_ENV !== "production") {
+      if (
+        email.trim().toLowerCase() === "owner@oldman.voice" ||
+        email.trim().toLowerCase() === "admin@oldman.voice"
+      ) {
+        const cookieStore = cookies();
+        cookieStore.set(MOCK_ADMIN_COOKIE, "authenticated", {
+          path: "/",
+          httpOnly: true,
+          secure: false,
+          sameSite: "lax",
+          maxAge: 60 * 60 * 24 * 7,
+        });
 
-      return NextResponse.json({
-        success: true,
-        note: "Logged in via local development session. Configure Supabase in .env.local for production auth.",
-      });
+        return NextResponse.json({
+          success: true,
+          note: "Logged in via local development session.",
+        });
+      }
     }
 
     return NextResponse.json(
@@ -65,7 +90,7 @@ export async function POST(req: NextRequest) {
       { status: 401 }
     );
   } catch (err: unknown) {
-    console.error("Login error:", err);
+    console.error("Login route error:", err);
     return NextResponse.json({ error: "Failed to authenticate." }, { status: 500 });
   }
 }

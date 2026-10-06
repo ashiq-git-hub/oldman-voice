@@ -9,6 +9,15 @@ import { QuestionWithResponseCount } from "@/types/database";
 
 export const dynamic = "force-dynamic";
 
+interface QuestionQueryRow {
+  id: string;
+  question: string;
+  question_date: string;
+  is_active: boolean;
+  created_at: string;
+  responses?: Array<{ count: number }>;
+}
+
 async function getArchiveQuestions(): Promise<QuestionWithResponseCount[]> {
   if (isSupabaseConfigured()) {
     const supabase = createClient() || createAdminClient();
@@ -26,8 +35,7 @@ async function getArchiveQuestions(): Promise<QuestionWithResponseCount[]> {
         .order("question_date", { ascending: false });
 
       if (!error && data) {
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        return data.map((q: any) => ({
+        return (data as unknown as QuestionQueryRow[]).map((q) => ({
           id: q.id,
           question: q.question,
           question_date: q.question_date,

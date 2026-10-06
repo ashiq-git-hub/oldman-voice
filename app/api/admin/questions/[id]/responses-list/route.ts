@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { isCurrentUserAdmin } from "@/lib/auth-check";
+import { isValidQuestionId } from "@/lib/validation";
 import { createClient, isSupabaseConfigured } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { mockStore } from "@/lib/mock-store";
@@ -13,18 +14,18 @@ export async function GET(
 ) {
   const isAdmin = await isCurrentUserAdmin();
   if (!isAdmin) {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    return NextResponse.json({ error: "Unauthorized access." }, { status: 401 });
   }
 
   const { id: questionId } = params;
-  if (!questionId) {
-    return NextResponse.json({ error: "Question ID required" }, { status: 400 });
+  if (!questionId || !isValidQuestionId(questionId)) {
+    return NextResponse.json({ error: "Valid question ID required." }, { status: 400 });
   }
 
   if (isSupabaseConfigured()) {
     const supabase = createClient() || createAdminClient();
     if (!supabase) {
-      return NextResponse.json({ error: "Database unavailable" }, { status: 500 });
+      return NextResponse.json({ error: "Database unavailable." }, { status: 500 });
     }
 
     const { data, error } = await supabase
@@ -34,7 +35,8 @@ export async function GET(
       .order("created_at", { ascending: false });
 
     if (error) {
-      return NextResponse.json({ error: error.message }, { status: 500 });
+      console.error("Fetch responses error:", error);
+      return NextResponse.json({ error: "Failed to load responses." }, { status: 500 });
     }
 
     return NextResponse.json({ responses: (data as ResponseItem[]) || [] });

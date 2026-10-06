@@ -128,7 +128,7 @@ export default function ResponseForm({ questionId }: ResponseFormProps) {
           <button
             type="submit"
             disabled={isSubmitting || !response.trim()}
-            className="vintage-btn w-full sm:w-auto justify-center group px-6 py-3.5 sm:py-3 bg-ink text-parchment hover:bg-charcoal active:bg-ink-light disabled:opacity-30 disabled:pointer-events-none rounded-none text-xs font-medium tracking-[0.16em] uppercase shadow-sm"
+            className="vintage-btn w-full sm:w-auto justify-center group px-6 py-3.5 sm:py-3 bg-ink text-parchment hover:bg-charcoal active:bg-ink-light focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brass focus-visible:ring-offset-2 focus-visible:ring-offset-parchment disabled:opacity-30 disabled:pointer-events-none rounded-none text-xs font-medium tracking-[0.16em] uppercase shadow-sm"
           >
             {isSubmitting ? (
               <span>placing your words...</span>

@@ -26,6 +26,8 @@ yarn-error.log*
 # local env files (STRICTLY NEVER COMMIT)
 .env*.local
 .env
+.env*
+!.env.example
 
 # vercel
 .vercel
@@ -34,5 +36,5 @@ yarn-error.log*
 *.tsbuildinfo
 next-env.d.ts
 
-.vercel
-.env*
+# supabase temporary cache
+supabase/.temp/

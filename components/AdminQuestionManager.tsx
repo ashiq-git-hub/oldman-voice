@@ -158,7 +158,7 @@ export default function AdminQuestionManager({
                 required
                 value={questionDate}
                 onChange={(e) => setQuestionDate(e.target.value)}
-                className="w-full bg-[#F4F0E7] border border-rule px-4 py-2.5 text-sm text-ink font-sans outline-none focus:border-brass transition-colors rounded-none"
+                className="w-full bg-[#F4F0E7] border border-rule px-4 py-2.5 text-sm text-ink font-sans outline-none focus:border-brass focus-visible:ring-1 focus-visible:ring-brass transition-colors rounded-none"
               />
               <span className="text-[11px] text-ink-faint mt-1 block">
                 {questionDate === todayStr ? "Scheduled for Today" : questionDate > todayStr ? "Future date" : "Past date"}
@@ -180,7 +180,7 @@ export default function AdminQuestionManager({
                 value={questionText}
                 onChange={(e) => setQuestionText(e.target.value)}
                 placeholder="What is something you hope never changes?"
-                className="w-full bg-[#F4F0E7] border border-rule px-4 py-2.5 font-serif text-lg text-ink placeholder:text-ink-faint/50 placeholder:italic outline-none focus:border-brass transition-colors rounded-none"
+                className="w-full bg-[#F4F0E7] border border-rule px-4 py-2.5 font-serif text-lg text-ink placeholder:text-ink-faint/50 placeholder:italic outline-none focus:border-brass focus-visible:ring-1 focus-visible:ring-brass transition-colors rounded-none"
               />
               <div className="flex justify-between items-center text-[11px] text-ink-faint mt-1">
                 <span>Thought-provoking, quiet, and reflective.</span>
@@ -205,7 +205,7 @@ export default function AdminQuestionManager({
               <button
                 type="button"
                 onClick={handleCancelEdit}
-                className="text-xs uppercase tracking-archive text-ink-faint hover:text-ink font-sans"
+                className="text-xs uppercase tracking-archive text-ink-faint hover:text-ink font-sans focus-visible:outline-none focus-visible:underline"
               >
                 Cancel
               </button>
@@ -214,7 +214,7 @@ export default function AdminQuestionManager({
             <button
               type="submit"
               disabled={isSubmitting}
-              className="vintage-btn px-6 py-2.5 bg-ink text-parchment hover:bg-charcoal active:bg-ink-light disabled:opacity-50 text-xs font-medium tracking-archive uppercase rounded-none transition-all shadow-sm"
+              className="vintage-btn px-6 py-2.5 bg-ink text-parchment hover:bg-charcoal active:bg-ink-light focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brass focus-visible:ring-offset-2 focus-visible:ring-offset-parchment disabled:opacity-50 text-xs font-medium tracking-archive uppercase rounded-none transition-all shadow-sm"
             >
               {isSubmitting ? (
                 <span>saving inquiry...</span>

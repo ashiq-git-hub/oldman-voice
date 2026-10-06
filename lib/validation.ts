@@ -4,6 +4,15 @@ export interface ValidationResult {
   sanitized?: string;
 }
 
+const UUID_REGEX = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+const MOCK_ID_REGEX = /^q-[0-9a-zA-Z_-]+$/;
+
+export function isValidQuestionId(id: unknown): boolean {
+  if (typeof id !== "string") return false;
+  const trimmed = id.trim();
+  return UUID_REGEX.test(trimmed) || MOCK_ID_REGEX.test(trimmed);
+}
+
 export function validateResponseSubmission(
   response: unknown,
   honeypot?: unknown
@@ -30,10 +39,14 @@ export function validateResponseSubmission(
     };
   }
 
-  // Basic sanitization: strip zero-width characters and excessive repetitive control chars
+  // Basic sanitization: strip zero-width characters and normalize line breaks
   const sanitized = trimmed
     .replace(/[\u200B-\u200D\uFEFF]/g, "") // strip zero-width spaces
     .replace(/\r\n/g, "\n");
+
+  if (sanitized.trim().length === 0) {
+    return { valid: false, error: "Please enter non-empty text." };
+  }
 
   return { valid: true, sanitized };
 }

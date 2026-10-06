@@ -1,8 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
-import { validateResponseSubmission } from "@/lib/validation";
+import { validateResponseSubmission, isValidQuestionId } from "@/lib/validation";
 import { checkRateLimit } from "@/lib/rate-limit";
 import { createClient, isSupabaseConfigured } from "@/lib/supabase/server";
-import { createAdminClient } from "@/lib/supabase/admin";
 import { mockStore } from "@/lib/mock-store";
 
 export const dynamic = "force-dynamic";
@@ -24,7 +23,16 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    // 2. Parse request body
+    // 2. Request size limit check (Prevent memory exhaustion)
+    const contentLength = Number(req.headers.get("content-length") || 0);
+    if (contentLength > 10240) {
+      return NextResponse.json(
+        { error: "Submission payload exceeds allowed size." },
+        { status: 413 }
+      );
+    }
+
+    // 3. Parse request body
     const body = await req.json().catch(() => null);
     if (!body || typeof body !== "object") {
       return NextResponse.json(
@@ -35,14 +43,14 @@ export async function POST(req: NextRequest) {
 
     const { questionId, response, website_url_hp } = body;
 
-    if (!questionId || typeof questionId !== "string") {
+    if (!isValidQuestionId(questionId)) {
       return NextResponse.json(
         { error: "A valid question reference is required." },
         { status: 400 }
       );
     }
 
-    // 3. Validation & Honeypot Check
+    // 4. Validation & Honeypot Check
     const validation = validateResponseSubmission(response, website_url_hp);
     if (!validation.valid || !validation.sanitized) {
       return NextResponse.json(
@@ -51,12 +59,15 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    // 4. Persistence - Store ONLY question_id and response text (Zero identity or metadata)
+    // 5. Persistence - Store ONLY question_id and response text (Zero identity or metadata)
+    // Anonymous public submissions MUST strictly use the anon client so Row Level Security is enforced.
     if (isSupabaseConfigured()) {
-      // Use client or admin client to insert
-      const supabase = createClient() || createAdminClient();
+      const supabase = createClient();
       if (!supabase) {
-        throw new Error("Database connection unavailable.");
+        return NextResponse.json(
+          { error: "Unable to record your response. Please try again." },
+          { status: 500 }
+        );
       }
 
       const { error } = await supabase.from("responses").insert({
@@ -72,11 +83,11 @@ export async function POST(req: NextRequest) {
         );
       }
     } else {
-      // Local fallback mock store
+      // Local fallback mock store (development only)
       mockStore.addResponse(questionId, validation.sanitized);
     }
 
-    // 5. Success response (Literary microcopy)
+    // 6. Success response (Literary microcopy)
     return NextResponse.json(
       {
         success: true,

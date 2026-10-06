@@ -79,7 +79,7 @@ export default function AdminLoginPage() {
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               placeholder="owner@oldman.voice"
-              className="w-full bg-[#FAF7F0] border border-rule px-4 py-2.5 text-sm text-ink font-sans outline-none focus:border-brass transition-colors rounded-none placeholder:text-ink-faint/50"
+              className="w-full bg-[#FAF7F0] border border-rule px-4 py-2.5 text-sm text-ink font-sans outline-none focus:border-brass focus-visible:ring-1 focus-visible:ring-brass transition-colors rounded-none placeholder:text-ink-faint/50"
             />
           </div>
 
@@ -97,7 +97,7 @@ export default function AdminLoginPage() {
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               placeholder="••••••••••••"
-              className="w-full bg-[#FAF7F0] border border-rule px-4 py-2.5 text-sm text-ink font-sans outline-none focus:border-brass transition-colors rounded-none placeholder:text-ink-faint/50"
+              className="w-full bg-[#FAF7F0] border border-rule px-4 py-2.5 text-sm text-ink font-sans outline-none focus:border-brass focus-visible:ring-1 focus-visible:ring-brass transition-colors rounded-none placeholder:text-ink-faint/50"
             />
           </div>
 
@@ -114,7 +114,7 @@ export default function AdminLoginPage() {
             <button
               type="submit"
               disabled={isLoading}
-              className="vintage-btn w-full justify-center px-6 py-3 bg-ink text-parchment hover:bg-charcoal active:bg-ink-light disabled:opacity-50 text-xs font-medium tracking-archive uppercase rounded-none transition-all shadow-sm"
+              className="vintage-btn w-full justify-center px-6 py-3 bg-ink text-parchment hover:bg-charcoal active:bg-ink-light focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brass focus-visible:ring-offset-2 focus-visible:ring-offset-parchment disabled:opacity-50 text-xs font-medium tracking-archive uppercase rounded-none transition-all shadow-sm"
             >
               {isLoading ? (
                 <span>verifying seal...</span>
