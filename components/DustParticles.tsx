@@ -48,14 +48,15 @@ export default function DustParticles() {
     let width = (canvas.width = window.innerWidth);
     let height = (canvas.height = window.innerHeight);
 
-    // Warm vintage tones matching old notebook paper, dried ink, and brass
+    // Exact brass palette matching the date header (text-brass: #9A8358 / rgb(154, 131, 88))
+    // No greyish or black tones — pure warm brass and golden tones
     const colors = [
-      "95, 82, 68",    // Vintage warm ink fleck
-      "148, 126, 84",  // Soft aged brass speck
-      "120, 108, 92",  // Delicate parchment fiber
-      "68, 62, 54",    // Charcoal dust speck
-      "162, 140, 100", // Faint sunlit dust mote
-      "135, 115, 78",  // Antique gold dust
+      "154, 131, 88",  // Exact brass #9A8358 from 06 / OCTOBER / 2026
+      "178, 155, 108", // Light brass #B29B6C
+      "140, 118, 76",  // Deep antique brass #8C764C
+      "166, 142, 95",  // Rich golden brass #A68E5F
+      "185, 160, 112", // Soft illuminated brass
+      "160, 136, 92",  // Warm parchment brass
     ];
 
     // Compute particle count — rich, ultra-dense field of small dust dots
@@ -79,15 +80,15 @@ export default function DustParticles() {
         if (rand < 0.58) {
           // Tiny micro-specks (~0.28px - 0.75px)
           radius = 0.28 + Math.random() * 0.47;
-          baseAlpha = 0.11 + Math.random() * 0.20;
+          baseAlpha = 0.20 + Math.random() * 0.24;
         } else if (rand < 0.88) {
           // Medium noticeable dust motes (~0.85px - 1.65px)
           radius = 0.85 + Math.random() * 0.80;
-          baseAlpha = 0.16 + Math.random() * 0.24;
+          baseAlpha = 0.26 + Math.random() * 0.26;
         } else {
           // Bigger, prominent floating motes (~1.75px - 2.85px)
           radius = 1.75 + Math.random() * 1.10;
-          baseAlpha = 0.20 + Math.random() * 0.26;
+          baseAlpha = 0.32 + Math.random() * 0.28;
         }
         const baseVx = (Math.random() - 0.5) * 0.16;
         const baseVy = -0.04 - Math.random() * 0.12; // Slow upward thermal float
@@ -294,7 +295,7 @@ export default function DustParticles() {
         // Render dot
         ctx.beginPath();
         ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
-        ctx.fillStyle = `rgba(${p.rgb}, ${Math.max(p.alpha, 0.06)})`;
+        ctx.fillStyle = `rgba(${p.rgb}, ${Math.max(p.alpha, 0.12)})`;
         ctx.fill();
       }
 
@@ -309,7 +310,7 @@ export default function DustParticles() {
           m.vy *= 0.96;
 
           const progress = m.life / m.maxLife;
-          const alpha = (1 - progress) * 0.32;
+          const alpha = (1 - progress) * 0.45;
 
           if (progress >= 1) {
             trailMotes.splice(i, 1);
