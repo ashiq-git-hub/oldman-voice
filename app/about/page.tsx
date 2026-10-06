@@ -13,7 +13,7 @@ export default function AboutPage() {
     <div className="flex-1 flex flex-col justify-between">
       <Header />
 
-      <main className="w-full max-w-2xl mx-auto px-6 sm:px-8 py-12 sm:py-20 my-auto">
+      <main className="w-full max-w-2xl mx-auto px-4 sm:px-8 py-8 sm:py-20 my-auto">
         <article className="space-y-10 sm:space-y-12">
           {/* Section Masthead */}
           <div className="border-b border-rule pb-6">

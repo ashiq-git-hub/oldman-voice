@@ -59,15 +59,15 @@ export default async function HomePage() {
   const question = await getTodayQuestion();
 
   return (
-    <div className="flex-1 flex flex-col justify-between">
+    <div className="flex-1 flex flex-col justify-between min-h-[100dvh]">
       <Header />
 
-      <main className="w-full max-w-2xl mx-auto px-6 sm:px-8 py-8 sm:py-14 my-auto">
+      <main className="w-full max-w-2xl mx-auto px-4 sm:px-8 py-4 sm:py-12 my-auto">
         <article aria-labelledby="question-heading">
           <QuestionCard question={question} />
 
           {question && (
-            <div className="mt-4 sm:mt-6">
+            <div className="mt-2 sm:mt-6">
               <ResponseForm questionId={question.id} />
             </div>
           )}

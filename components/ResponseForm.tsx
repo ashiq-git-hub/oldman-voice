@@ -70,7 +70,7 @@ export default function ResponseForm({ questionId }: ResponseFormProps) {
   }
 
   return (
-    <form onSubmit={handleSubmit} className="w-full mt-8 sm:mt-10">
+    <form onSubmit={handleSubmit} className="w-full mt-6 sm:mt-10">
       {/* Honeypot field (hidden from real users, caught by spam bots) */}
       <div className="hidden" aria-hidden="true">
         <label htmlFor="website_url_hp">Leave empty</label>
@@ -87,27 +87,27 @@ export default function ResponseForm({ questionId }: ResponseFormProps) {
 
       {/* Stationery response container */}
       <div className="relative">
-        <div className="stationery-box p-6 sm:p-8 rounded-sm">
+        <div className="stationery-box p-4 sm:p-8 rounded-sm">
           <textarea
             value={response}
             onChange={(e) => setResponse(e.target.value)}
             disabled={isSubmitting}
             placeholder="Leave your answer here..."
             maxLength={charLimit}
-            rows={5}
-            className="w-full bg-transparent resize-none outline-none font-serif text-lg sm:text-xl text-ink placeholder:text-ink-faint/60 placeholder:italic leading-relaxed transition-opacity disabled:opacity-50"
+            rows={4}
+            className="w-full bg-transparent resize-none outline-none font-serif text-base sm:text-xl text-ink placeholder:text-ink-faint/60 placeholder:italic leading-relaxed transition-opacity disabled:opacity-50 min-h-[120px] sm:min-h-[140px]"
             aria-label="Your anonymous response"
           />
 
           {/* Understated bottom status bar */}
-          <div className="mt-4 pt-3 border-t border-rule/50 flex items-center justify-between text-xs text-ink-faint font-sans">
+          <div className="mt-3 pt-2.5 sm:mt-4 sm:pt-3 border-t border-rule/50 flex items-center justify-between text-[11px] sm:text-xs text-ink-faint font-sans">
             <span className="tracking-wider">
               {currentLength > 0 ? `${currentLength} / ${charLimit}` : "strictly anonymous"}
             </span>
 
             {currentLength > 1800 && (
-              <span className="text-amber-700">
-                {charLimit - currentLength} characters left
+              <span className="text-amber-800 font-medium">
+                {charLimit - currentLength} left
               </span>
             )}
           </div>
@@ -117,18 +117,18 @@ export default function ResponseForm({ questionId }: ResponseFormProps) {
         {errorMessage && (
           <p
             role="alert"
-            className="mt-3 text-sm text-red-800/90 font-sans tracking-wide text-left pl-1"
+            className="mt-2.5 text-xs sm:text-sm text-red-800/90 font-sans tracking-wide text-left pl-1"
           >
             {errorMessage}
           </p>
         )}
 
         {/* Action button */}
-        <div className="mt-6 sm:mt-8 flex justify-end">
+        <div className="mt-4 sm:mt-8 flex justify-end">
           <button
             type="submit"
             disabled={isSubmitting || !response.trim()}
-            className="vintage-btn group px-6 py-3 bg-ink text-parchment hover:bg-charcoal active:bg-ink-light disabled:opacity-30 disabled:pointer-events-none rounded-none text-xs font-medium tracking-[0.16em] uppercase shadow-sm"
+            className="vintage-btn w-full sm:w-auto justify-center group px-6 py-3.5 sm:py-3 bg-ink text-parchment hover:bg-charcoal active:bg-ink-light disabled:opacity-30 disabled:pointer-events-none rounded-none text-xs font-medium tracking-[0.16em] uppercase shadow-sm"
           >
             {isSubmitting ? (
               <span>placing your words...</span>
