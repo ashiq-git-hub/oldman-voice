@@ -57,10 +57,10 @@ export default function DustParticles() {
       "162, 140, 100", // Faint sunlit dust mote
     ];
 
-    // Compute particle count — rich density for small dots across the entire canvas
+    // Compute particle count — lush, dense field of small dots across the canvas
     const getParticleCount = () => {
       const area = window.innerWidth * window.innerHeight;
-      return Math.min(Math.max(Math.floor(area / 2800), 220), 550);
+      return Math.min(Math.max(Math.floor(area / 1200), 450), 1200);
     };
 
     let particles: Particle[] = [];
@@ -71,8 +71,8 @@ export default function DustParticles() {
       particles = [];
       for (let i = 0; i < count; i++) {
         // Extra small in size (tiny delicate pinpoints)
-        const radius = 0.3 + Math.random() * 0.65; // ~0.3px to 0.95px
-        const baseAlpha = 0.13 + Math.random() * 0.26; // Subtle, elegant opacity
+        const radius = 0.28 + Math.random() * 0.62; // ~0.28px to 0.90px
+        const baseAlpha = 0.12 + Math.random() * 0.25; // Subtle, elegant opacity
         const baseVx = (Math.random() - 0.5) * 0.16;
         const baseVy = -0.04 - Math.random() * 0.12; // Slow upward thermal float
 
@@ -123,8 +123,8 @@ export default function DustParticles() {
       // Spawn subtle extra micro-dust motes as cursor glides or drags across the page
       if (
         (mouse.isDown || mouse.speed > 2.5) &&
-        trailMotes.length < 80 &&
-        Math.random() < (mouse.isDown ? 0.7 : 0.45)
+        trailMotes.length < 120 &&
+        Math.random() < (mouse.isDown ? 0.75 : 0.5)
       ) {
         const angle = Math.random() * Math.PI * 2;
         const speed = 0.2 + Math.random() * 0.6;
