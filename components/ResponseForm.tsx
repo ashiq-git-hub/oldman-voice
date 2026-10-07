@@ -106,7 +106,7 @@ export default function ResponseForm({ questionId }: ResponseFormProps) {
           />
 
           {/* Interactive Writing Surface Inside the Paper */}
-          <div className="relative z-10 p-5 sm:p-9 pt-6 sm:pt-8 pb-3.5 sm:pb-5 min-h-[175px] sm:min-h-[200px] flex flex-col justify-between">
+          <div className="relative z-10 px-7 sm:px-14 pt-6 sm:pt-8 pb-3.5 sm:pb-5 min-h-[175px] sm:min-h-[200px] flex flex-col justify-between">
             <textarea
               value={response}
               onChange={(e) => setResponse(e.target.value)}
@@ -114,7 +114,7 @@ export default function ResponseForm({ questionId }: ResponseFormProps) {
               placeholder="Leave your answer here..."
               maxLength={charLimit}
               rows={4}
-              className="w-full bg-transparent resize-none outline-none font-serif text-base sm:text-xl text-ink placeholder:text-ink/50 placeholder:italic leading-relaxed transition-opacity disabled:opacity-50 min-h-[105px] sm:min-h-[125px]"
+              className="w-full bg-transparent resize-none outline-none font-serif text-base sm:text-xl text-ink placeholder:text-ink/50 placeholder:italic leading-relaxed transition-opacity disabled:opacity-50 min-h-[105px] sm:min-h-[125px] pl-1.5 sm:pl-2.5"
               aria-label="Your anonymous response"
             />
 
