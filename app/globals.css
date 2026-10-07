@@ -69,6 +69,40 @@ body {
   box-shadow: 0 6px 24px -2px rgba(30, 29, 26, 0.06), 0 2px 6px rgba(30, 29, 26, 0.03);
 }
 
+/* Authentic elevated vintage paper note styling */
+.paper-elevated-card {
+  position: relative;
+  transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), filter 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.paper-elevated-card:focus-within {
+  transform: translateY(-1.5px);
+}
+
+/* Page curl / physical corner-lift shadows behind the paper */
+.paper-corner-lift {
+  position: absolute;
+  bottom: 0px;
+  height: 24px;
+  width: 44%;
+  background: transparent;
+  pointer-events: none;
+  z-index: 0;
+  filter: blur(4px);
+}
+
+.paper-corner-lift-left {
+  left: 14px;
+  box-shadow: 0 16px 24px rgba(35, 26, 12, 0.15);
+  transform: rotate(-1.6deg);
+}
+
+.paper-corner-lift-right {
+  right: 14px;
+  box-shadow: 0 16px 24px rgba(35, 26, 12, 0.15);
+  transform: rotate(1.6deg);
+}
+
 /* Understated button hover interaction */
 .vintage-btn {
   display: inline-flex;
