@@ -1,128 +1,88 @@
 "use client";
 
-import { useState } from "react";
-import { QuestionWithResponseCount, ResponseItem } from "@/types/database";
+import Link from "next/link";
+import { QuestionWithResponseCount } from "@/types/database";
 import { formatDateString } from "@/components/QuestionCard";
-import AdminResponseCard from "./AdminResponseCard";
 
 interface AdminArchiveViewProps {
   questions: QuestionWithResponseCount[];
 }
 
 export default function AdminArchiveView({ questions }: AdminArchiveViewProps) {
-  const [selectedQuestionId, setSelectedQuestionId] = useState<string | null>(
-    questions[0]?.id || null
-  );
-  const [responses, setResponses] = useState<ResponseItem[]>([]);
-  const [isLoadingResponses, setIsLoadingResponses] = useState(false);
-
-  const selectedQuestion = questions.find((q) => q.id === selectedQuestionId);
-
-  const fetchResponses = async (questionId: string) => {
-    setSelectedQuestionId(questionId);
-    setIsLoadingResponses(true);
-    try {
-      const res = await fetch(`/api/admin/questions/${questionId}/responses-list`);
-      if (res.ok) {
-        const data = await res.json();
-        setResponses(data.responses || []);
-      }
-    } catch (err) {
-      console.error(err);
-    } finally {
-      setIsLoadingResponses(false);
-    }
-  };
-
-  const handleDeletedResponse = (id: string) => {
-    setResponses((prev) => prev.filter((r) => r.id !== id));
-  };
-
   return (
-    <div className="grid grid-cols-1 md:grid-cols-12 gap-8 items-start">
-      {/* Left List of Past Questions & Dates */}
-      <div className="md:col-span-5 space-y-4">
-        <h2 className="text-xs uppercase tracking-archive text-brass font-medium border-b border-rule pb-2">
-          Chronological Inquiries
-        </h2>
-
-        {questions.length === 0 ? (
-          <p className="text-sm text-ink-muted italic py-4">No inquiries archived yet.</p>
-        ) : (
-          <div className="divide-y divide-rule/60">
-            {questions.map((q) => {
-              const isSelected = q.id === selectedQuestionId;
-              return (
-                <button
-                  key={q.id}
-                  type="button"
-                  onClick={() => fetchResponses(q.id)}
-                  className={`w-full text-left py-4 px-3 transition-colors ${
-                    isSelected
-                      ? "bg-[#FAF7F0] border-l-2 border-brass pl-4"
-                      : "hover:bg-[#FAF7F0]/60"
-                  }`}
-                >
-                  <time className="text-[11px] font-sans tracking-archive uppercase text-brass font-medium block">
-                    {formatDateString(q.question_date)}
-                  </time>
-                  <p className="font-serif text-base text-ink line-clamp-2 mt-1">
-                    &ldquo;{q.question}&rdquo;
-                  </p>
-                  <span className="text-[11px] font-sans tracking-wider text-ink-faint mt-1.5 block">
-                    {q.response_count} {q.response_count === 1 ? "response" : "responses"}
-                  </span>
-                </button>
-              );
-            })}
-          </div>
-        )}
-      </div>
-
-      {/* Right: Selected Question's Responses */}
-      <div className="md:col-span-7 bg-[#FAF7F0] border border-rule p-6 sm:p-8 rounded-sm">
-        {selectedQuestion ? (
-          <div>
-            <div className="border-b border-rule pb-4 mb-4">
-              <time className="text-xs uppercase tracking-archive text-brass font-medium font-sans">
-                {formatDateString(selectedQuestion.question_date)}
-              </time>
-              <h3 className="font-serif text-2xl text-ink font-normal mt-1 leading-snug">
-                &ldquo;{selectedQuestion.question}&rdquo;
-              </h3>
-              <p className="text-xs text-ink-faint uppercase tracking-wider font-sans mt-2">
-                {selectedQuestion.response_count} {selectedQuestion.response_count === 1 ? "thought recorded" : "thoughts recorded"}
-              </p>
-            </div>
-
-            {isLoadingResponses ? (
-              <p className="py-8 text-center text-sm font-sans text-ink-faint">
-                Opening correspondence...
-              </p>
-            ) : responses.length === 0 ? (
-              <div className="py-12 text-center text-ink-muted">
-                <p className="font-serif italic text-base">
-                  No responses recorded for this date.
-                </p>
-              </div>
-            ) : (
-              <div className="divide-y divide-rule/60">
-                {responses.map((resp) => (
-                  <AdminResponseCard
-                    key={resp.id}
-                    response={resp}
-                    onDeleted={handleDeletedResponse}
-                  />
-                ))}
-              </div>
-            )}
-          </div>
-        ) : (
-          <p className="text-sm text-ink-muted italic text-center py-12">
-            Select a date from the archive to read its correspondence.
+    <div className="w-full">
+      {questions.length === 0 ? (
+        <div className="bg-[#FAF7F0] border border-rule/70 p-12 text-center rounded-sm">
+          <p className="font-serif italic text-lg text-ink-muted mb-2">
+            No inquiries archived yet.
           </p>
-        )}
-      </div>
+          <p className="text-xs uppercase tracking-wider text-ink-faint font-sans">
+            Past questions will appear here once scheduled.
+          </p>
+        </div>
+      ) : (
+        <div className="space-y-4 sm:space-y-5">
+          {questions.map((q) => {
+            const hasResponses = q.response_count > 0;
+            return (
+              <div
+                key={q.id}
+                className="group bg-[#FAF7F0] border border-rule/80 hover:border-brass/60 p-5 sm:p-7 rounded-sm transition-all duration-200 hover:shadow-sm"
+              >
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                  {/* Left Column: Date & Question */}
+                  <div className="flex-1 min-w-0 pr-0 sm:pr-6">
+                    <div className="flex items-center gap-2.5 mb-2">
+                      <span className="w-3 h-px bg-brass inline-block" />
+                      <time className="text-[11px] sm:text-xs font-sans tracking-archive uppercase text-brass font-medium">
+                        {formatDateString(q.question_date)}
+                      </time>
+                      {q.is_active && (
+                        <span className="ml-1 text-[10px] uppercase tracking-wider bg-brass/15 text-brass px-1.5 py-0.5 rounded-none font-sans font-medium">
+                          Active
+                        </span>
+                      )}
+                    </div>
+
+                    <Link
+                      href={`/admin/archive/${q.id}`}
+                      className="group-hover:text-brass transition-colors duration-200 block"
+                    >
+                      <h2 className="font-serif text-lg sm:text-2xl text-ink font-normal leading-snug">
+                        &ldquo;{q.question}&rdquo;
+                      </h2>
+                    </Link>
+
+                    {/* Responses Count */}
+                    <div className="mt-2.5 flex items-center gap-2 text-xs font-sans">
+                      <span
+                        className={`font-medium ${
+                          hasResponses ? "text-ink" : "text-ink-faint"
+                        }`}
+                      >
+                        {q.response_count}{" "}
+                        {q.response_count === 1 ? "response" : "responses"}
+                      </span>
+                    </div>
+                  </div>
+
+                  {/* Right Column: Prominent View Button */}
+                  <div className="shrink-0 flex items-center justify-start sm:justify-end pt-2 sm:pt-0 border-t sm:border-t-0 border-rule/50">
+                    <Link
+                      href={`/admin/archive/${q.id}`}
+                      className="vintage-btn inline-flex items-center gap-2 px-5 py-2.5 bg-ink text-parchment hover:bg-charcoal active:bg-ink-light text-xs font-sans font-medium uppercase tracking-[0.14em] shadow-sm transition-all"
+                      title={`View all ${q.response_count} responses for this date`}
+                    >
+                      <span>View</span>
+                      <span className="arrow-icon">→</span>
+                    </Link>
+                  </div>
+                </div>
+              </div>
+            );
+          })}
+        </div>
+      )}
     </div>
   );
 }

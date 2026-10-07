@@ -58,7 +58,10 @@ export default function AdminHeader() {
         <div className="flex items-center gap-6">
           <nav className="flex items-center gap-6">
             {navItems.map((item) => {
-              const isActive = pathname === item.href;
+              const isActive =
+                item.href === "/admin"
+                  ? pathname === "/admin"
+                  : pathname === item.href || pathname.startsWith(item.href + "/");
               return (
                 <Link
                   key={item.href}

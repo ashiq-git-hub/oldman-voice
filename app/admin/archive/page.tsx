@@ -62,7 +62,7 @@ export default async function AdminArchivePage() {
     <div className="min-h-screen flex flex-col bg-parchment text-ink paper-texture">
       <AdminHeader />
 
-      <main className="w-full max-w-5xl mx-auto px-6 sm:px-8 py-10 sm:py-14 flex-1">
+      <main className="w-full max-w-4xl mx-auto px-6 sm:px-8 py-10 sm:py-14 flex-1">
         <div className="mb-8">
           <h1 className="font-serif text-3xl sm:text-4xl font-normal text-ink">
             Archive of Past Inquiries
