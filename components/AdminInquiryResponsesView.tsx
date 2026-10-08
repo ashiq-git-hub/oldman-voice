@@ -86,6 +86,7 @@ export default function AdminInquiryResponsesView({
                 key={resp.id}
                 response={resp}
                 onDeleted={handleDeletedResponse}
+                dateStr={formatDateString(question.question_date)}
               />
             ))}
           </div>

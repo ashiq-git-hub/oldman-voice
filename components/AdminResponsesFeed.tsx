@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { Question, ResponseItem } from "@/types/database";
+import { formatDateString } from "@/components/QuestionCard";
 import AdminResponseCard from "./AdminResponseCard";
 
 interface AdminResponsesFeedProps {
@@ -110,6 +111,11 @@ export default function AdminResponsesFeed({
               key={item.id}
               response={item}
               onDeleted={handleDeleted}
+              dateStr={
+                question?.question_date
+                  ? formatDateString(question.question_date)
+                  : undefined
+              }
             />
           ))}
         </div>
