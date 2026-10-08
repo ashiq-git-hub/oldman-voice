@@ -4,6 +4,7 @@ import { useState } from "react";
 import { Question, ResponseItem } from "@/types/database";
 import { formatDateString } from "@/components/QuestionCard";
 import AdminResponseCard from "./AdminResponseCard";
+import AdminCarouselToolbar from "./AdminCarouselToolbar";
 
 interface AdminResponsesFeedProps {
   question: Question | null;
@@ -95,6 +96,24 @@ export default function AdminResponsesFeed({
             )}
           </div>
         )}
+      </div>
+
+      {/* Instagram Carousel Suite Toolbar */}
+      <div className="my-5 p-3.5 sm:p-4 bg-[#FAF7F0] border border-rule rounded-sm flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+        <div>
+          <span className="text-[10px] sm:text-[11px] uppercase tracking-archive text-brass font-medium block">
+            Instagram Carousel Suite
+          </span>
+          <span className="text-xs text-ink-muted font-serif italic">
+            Export question cover, responses, and outro
+          </span>
+        </div>
+
+        <AdminCarouselToolbar
+          question={question}
+          responses={responses}
+          dateStr={question.question_date ? formatDateString(question.question_date) : undefined}
+        />
       </div>
 
       {/* Response list or empty state */}

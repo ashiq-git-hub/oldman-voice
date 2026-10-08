@@ -4,26 +4,34 @@ import { useEffect, useRef, useState, useCallback, useMemo } from "react";
 import {
   PostAspectRatio,
   PostImageFormat,
+  PostCardType,
   renderPostToCanvas,
+  DEFAULT_OUTRO_TEXT,
 } from "@/lib/post-card-renderer";
 import { formatDateString } from "@/components/QuestionCard";
 
 interface PostDownloadModalProps {
   isOpen: boolean;
   onClose: () => void;
-  response: {
+  cardType?: PostCardType;
+  text?: string;
+  response?: {
     id: string;
     response: string;
     created_at: string;
   } | null;
   dateStr?: string;
+  title?: string;
 }
 
 export default function PostDownloadModal({
   isOpen,
   onClose,
+  cardType = "response",
+  text,
   response,
   dateStr,
+  title,
 }: PostDownloadModalProps) {
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const [aspectRatio, setAspectRatio] = useState<PostAspectRatio>("4:5");
@@ -31,6 +39,21 @@ export default function PostDownloadModal({
   const [isRendering, setIsRendering] = useState(false);
   const [isDownloading, setIsDownloading] = useState(false);
   const [copied, setCopied] = useState(false);
+
+  // Editable text state (especially useful for custom outro or custom question)
+  const initialText = useMemo(() => {
+    if (text) return text;
+    if (response) return response.response;
+    if (cardType === "outro") return DEFAULT_OUTRO_TEXT;
+    return "";
+  }, [text, response, cardType]);
+
+  const [currentText, setCurrentText] = useState(initialText);
+
+  // Update text whenever modal opens or props change
+  useEffect(() => {
+    setCurrentText(initialText);
+  }, [initialText]);
 
   const effectiveDateStr = useMemo(() => {
     if (dateStr && dateStr !== "TODAY") return dateStr;
@@ -57,15 +80,16 @@ export default function PostDownloadModal({
     return () => window.removeEventListener("keydown", handleKeyDown);
   }, [isOpen, onClose]);
 
-  // Render canvas whenever response, aspect ratio, or open state changes
+  // Render canvas whenever inputs change
   const renderCanvas = useCallback(async () => {
-    if (!response || !canvasRef.current) return;
+    if (!canvasRef.current || !currentText) return;
     setIsRendering(true);
     try {
       await renderPostToCanvas(canvasRef.current, {
-        text: response.response,
+        text: currentText,
         dateStr: effectiveDateStr,
         aspectRatio,
+        cardType,
         format,
       });
     } catch (err) {
@@ -73,11 +97,10 @@ export default function PostDownloadModal({
     } finally {
       setIsRendering(false);
     }
-  }, [response, effectiveDateStr, aspectRatio, format]);
+  }, [currentText, effectiveDateStr, aspectRatio, cardType, format]);
 
   useEffect(() => {
     if (isOpen) {
-      // Small timeout to allow DOM element to mount
       const timer = setTimeout(() => {
         renderCanvas();
       }, 50);
@@ -85,7 +108,7 @@ export default function PostDownloadModal({
     }
   }, [isOpen, renderCanvas]);
 
-  if (!isOpen || !response) return null;
+  if (!isOpen) return null;
 
   const handleDownload = async () => {
     const canvas = canvasRef.current;
@@ -95,7 +118,11 @@ export default function PostDownloadModal({
     try {
       const extension = format === "image/png" ? "png" : "jpg";
       const cleanDate = effectiveDateStr.replace(/[^a-zA-Z0-9]/g, "-").toLowerCase();
-      const filename = `theoldman-keeps-${cleanDate}-${aspectRatio.replace(":", "x")}.${extension}`;
+      let prefix = "response";
+      if (cardType === "question") prefix = "01-theoldman-asks";
+      else if (cardType === "outro") prefix = "end-theoldman-keeps";
+
+      const filename = `theoldman-keeps-${cleanDate}-${prefix}-${aspectRatio.replace(":", "x")}.${extension}`;
 
       canvas.toBlob(
         (blob) => {
@@ -131,7 +158,6 @@ export default function PostDownloadModal({
       canvas.toBlob(async (blob) => {
         if (!blob) return;
         try {
-          // Clipboard Item only accepts PNG in most browsers
           let pngBlob = blob;
           if (blob.type !== "image/png") {
             const dataUrl = canvas.toDataURL("image/png");
@@ -152,6 +178,14 @@ export default function PostDownloadModal({
     }
   };
 
+  const modalTitle =
+    title ||
+    (cardType === "question"
+      ? "Slide 1: Question Cover Post"
+      : cardType === "outro"
+      ? "End Slide: Follow & Instruction CTA"
+      : "Reader Response Post");
+
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-6 bg-ink/75 backdrop-blur-sm animate-fade-in">
       {/* Click outside backdrop */}
@@ -169,11 +203,11 @@ export default function PostDownloadModal({
             <div className="flex items-center gap-2">
               <span className="w-2.5 h-px bg-brass inline-block" />
               <p className="text-[10px] sm:text-[11px] uppercase tracking-archive text-brass font-medium">
-                Photo Export Generator
+                Instagram Carousel Post Generator
               </p>
             </div>
             <h2 className="font-serif text-lg sm:text-xl text-ink font-normal">
-              Social Media Post Card
+              {modalTitle}
             </h2>
           </div>
 
@@ -202,7 +236,22 @@ export default function PostDownloadModal({
         {/* Modal Body: Controls & Preview */}
         <div className="flex-1 overflow-y-auto p-4 sm:p-6 flex flex-col lg:flex-row gap-6">
           {/* Controls Column */}
-          <div className="w-full lg:w-72 shrink-0 flex flex-col gap-5">
+          <div className="w-full lg:w-72 shrink-0 flex flex-col gap-4">
+            {/* If outro card, allow quick text adjustments */}
+            {cardType === "outro" && (
+              <div>
+                <label className="block text-[11px] uppercase tracking-wider text-ink-faint font-sans mb-1 font-medium">
+                  Outro Message
+                </label>
+                <textarea
+                  rows={5}
+                  value={currentText}
+                  onChange={(e) => setCurrentText(e.target.value)}
+                  className="w-full text-xs font-serif p-2.5 bg-[#F4EFE6] border border-rule rounded-sm text-ink outline-none focus:border-brass leading-relaxed resize-none"
+                />
+              </div>
+            )}
+
             {/* Aspect Ratio Options */}
             <div>
               <label className="block text-[11px] uppercase tracking-wider text-ink-faint font-sans mb-2 font-medium">
@@ -260,7 +309,7 @@ export default function PostDownloadModal({
             {/* File Format Options */}
             <div>
               <label className="block text-[11px] uppercase tracking-wider text-ink-faint font-sans mb-2 font-medium">
-                Image Quality Format
+                Image Format
               </label>
               <div className="grid grid-cols-2 gap-2">
                 <button
@@ -291,10 +340,10 @@ export default function PostDownloadModal({
             {/* Information snippet */}
             <div className="bg-[#F4EFE6]/70 border border-rule/70 p-3 rounded-sm text-[11px] text-ink-muted leading-relaxed">
               <p className="font-serif italic text-xs text-ink mb-1">
-                Authentic stationery rendering
+                Archival Linen Stationery
               </p>
               <p>
-                Renders high-resolution typography on vintage linen parchment matching your signature publication aesthetic.
+                Renders with authentic paper grain and signature typography for your Instagram carousel.
               </p>
             </div>
 
@@ -323,7 +372,7 @@ export default function PostDownloadModal({
                         d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"
                       />
                     </svg>
-                    <span>Download Photo</span>
+                    <span>Download Slide</span>
                   </>
                 )}
               </button>
@@ -351,7 +400,7 @@ export default function PostDownloadModal({
                         d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"
                       />
                     </svg>
-                    <span>Copy to Clipboard</span>
+                    <span>Copy Image</span>
                   </>
                 )}
               </button>
@@ -364,7 +413,7 @@ export default function PostDownloadModal({
               <div className="absolute inset-0 bg-[#EFE9DC]/75 backdrop-blur-[1px] flex items-center justify-center z-10">
                 <div className="flex items-center gap-2 text-xs uppercase tracking-wider text-ink-muted">
                   <div className="w-3.5 h-3.5 border-2 border-brass border-t-transparent rounded-full animate-spin" />
-                  <span>Preparing canvas...</span>
+                  <span>Preparing stationery...</span>
                 </div>
               </div>
             )}

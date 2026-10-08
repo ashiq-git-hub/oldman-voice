@@ -1,10 +1,13 @@
 export type PostAspectRatio = "4:5" | "1:1" | "9:16";
 export type PostImageFormat = "image/png" | "image/jpeg";
+export type PostCardType = "response" | "question" | "outro";
 
 export interface PostRenderOptions {
   text: string;
   dateStr: string;
   aspectRatio: PostAspectRatio;
+  cardType?: PostCardType;
+  customHeader?: string;
   format?: PostImageFormat;
 }
 
@@ -18,6 +21,15 @@ export interface PostDimensions {
   botY: number;
   marginX: number;
 }
+
+export const DEFAULT_OUTRO_TEXT = `That's today's.
+
+If you want to leave one, the link's in my bio.
+Nobody sees your name.
+
+I'll be here tomorrow too.
+
+@theoldman.keeps`;
 
 export function getPostDimensions(aspectRatio: PostAspectRatio): PostDimensions {
   switch (aspectRatio) {
@@ -137,6 +149,11 @@ function drawTrackedText(
   }
 }
 
+interface RenderLine {
+  text: string;
+  isParagraphGap?: boolean;
+}
+
 /**
  * Renders the high-quality post onto a canvas element.
  */
@@ -170,12 +187,20 @@ export async function renderPostToCanvas(
   const colorRule = "#D5CCB8"; // fine paper rule line
   const colorInk = "#1E1A17";  // rich dark body ink
 
-  // 2. Top Header ("ANONYMOUS RESPONSE" & Date)
+  // 2. Top Header
   ctx.fillStyle = colorMeta;
   ctx.textBaseline = "top";
   ctx.font = '21px "Cormorant Garamond", Georgia, serif';
 
-  const headerLeft = "ANONYMOUS RESPONSE";
+  let headerLeft = "ANONYMOUS RESPONSE";
+  if (options.customHeader) {
+    headerLeft = options.customHeader;
+  } else if (options.cardType === "question") {
+    headerLeft = "THE OLD MAN ASKS";
+  } else if (options.cardType === "outro") {
+    headerLeft = "THE OLD MAN KEEPS";
+  }
+
   const headerRight = (options.dateStr || "TODAY").toUpperCase();
 
   drawTrackedText(ctx, headerLeft, dims.marginX, dims.topY, 3.5, "left");
@@ -201,49 +226,85 @@ export async function renderPostToCanvas(
   drawTrackedText(ctx, "theoldman.keeps", dims.marginX, dims.botY, 3.2, "left");
 
   // 5. Quote Body - dynamic sizing and wrapping
-  const cleanText = options.text.trim();
-  const words = cleanText.split(/\s+/);
+  let rawText = options.text.trim();
+  if (options.cardType === "question") {
+    // Add graceful quotes around question if not present
+    if (!rawText.startsWith("“") && !rawText.startsWith('"')) {
+      rawText = `“${rawText}”`;
+    }
+  }
+
+  // Calculate font size
+  const words = rawText.split(/\s+/);
   const wordCount = words.length;
 
   let fontSize = 38;
-  if (options.aspectRatio === "1:1") {
-    if (wordCount > 110) fontSize = 29;
-    else if (wordCount > 75) fontSize = 33;
-    else if (wordCount > 40) fontSize = 36;
+  if (options.cardType === "question") {
+    if (wordCount < 15) fontSize = 48;
     else if (wordCount < 25) fontSize = 44;
-  } else if (options.aspectRatio === "9:16") {
-    if (wordCount > 130) fontSize = 32;
-    else if (wordCount > 80) fontSize = 36;
-    else if (wordCount < 30) fontSize = 44;
+    else if (wordCount < 45) fontSize = 40;
+    else fontSize = 36;
+  } else if (options.cardType === "outro") {
+    fontSize = 35;
   } else {
-    // 4:5 Portrait
-    if (wordCount > 130) fontSize = 32;
-    else if (wordCount > 85) fontSize = 35;
-    else if (wordCount < 30) fontSize = 44;
+    // Response card
+    if (options.aspectRatio === "1:1") {
+      if (wordCount > 110) fontSize = 29;
+      else if (wordCount > 75) fontSize = 33;
+      else if (wordCount > 40) fontSize = 36;
+      else if (wordCount < 25) fontSize = 44;
+    } else if (options.aspectRatio === "9:16") {
+      if (wordCount > 130) fontSize = 32;
+      else if (wordCount > 80) fontSize = 36;
+      else if (wordCount < 30) fontSize = 44;
+    } else {
+      // 4:5 Portrait
+      if (wordCount > 130) fontSize = 32;
+      else if (wordCount > 85) fontSize = 35;
+      else if (wordCount < 30) fontSize = 44;
+    }
   }
 
   ctx.font = `${fontSize}px "Cormorant Garamond", Georgia, serif`;
   const lineHeight = Math.round(fontSize * 1.56);
+  const paragraphGap = Math.round(fontSize * 0.85);
 
-  // Wrap lines
-  const lines: string[] = [];
-  let curLine = "";
+  // Wrap lines respecting paragraphs (\n)
+  const paragraphs = rawText.split("\n");
+  const renderLines: RenderLine[] = [];
 
-  for (const word of words) {
-    const testLine = curLine ? `${curLine} ${word}` : word;
-    const testWidth = ctx.measureText(testLine).width;
-    if (testWidth <= contentW) {
-      curLine = testLine;
-    } else {
-      if (curLine) lines.push(curLine);
-      curLine = word;
+  for (let pIdx = 0; pIdx < paragraphs.length; pIdx++) {
+    const p = paragraphs[pIdx].trim();
+    if (!p) {
+      // Empty line / paragraph break
+      renderLines.push({ text: "", isParagraphGap: true });
+      continue;
     }
+
+    const pWords = p.split(/\s+/);
+    let curLine = "";
+    for (const w of pWords) {
+      const testLine = curLine ? `${curLine} ${w}` : w;
+      const testWidth = ctx.measureText(testLine).width;
+      if (testWidth <= contentW) {
+        curLine = testLine;
+      } else {
+        if (curLine) renderLines.push({ text: curLine });
+        curLine = w;
+      }
+    }
+    if (curLine) renderLines.push({ text: curLine });
   }
-  if (curLine) lines.push(curLine);
+
+  // Calculate total height
+  let totalTextH = 0;
+  for (const item of renderLines) {
+    if (item.isParagraphGap) totalTextH += paragraphGap;
+    else totalTextH += lineHeight;
+  }
 
   // Vertical centering between rules
   const availableH = dims.botRuleY - dims.topRuleY;
-  const totalTextH = lines.length * lineHeight;
   let startY = dims.topRuleY + Math.floor((availableH - totalTextH) / 2);
 
   // Protect against overlapping with top rule
@@ -253,7 +314,34 @@ export async function renderPostToCanvas(
 
   ctx.fillStyle = colorInk;
   ctx.textBaseline = "top";
-  for (let i = 0; i < lines.length; i++) {
-    ctx.fillText(lines[i], dims.marginX, startY + i * lineHeight);
+
+  let curY = startY;
+  for (const item of renderLines) {
+    if (item.isParagraphGap) {
+      curY += paragraphGap;
+    } else {
+      ctx.fillText(item.text, dims.marginX, curY);
+      curY += lineHeight;
+    }
   }
+}
+
+/**
+ * Renders a post to a Blob (useful for downloading or creating Zip bundles)
+ */
+export async function renderPostToBlob(
+  options: PostRenderOptions
+): Promise<Blob> {
+  const canvas = document.createElement("canvas");
+  await renderPostToCanvas(canvas, options);
+  return new Promise((resolve, reject) => {
+    canvas.toBlob(
+      (blob) => {
+        if (blob) resolve(blob);
+        else reject(new Error("Failed to create blob from canvas"));
+      },
+      options.format || "image/png",
+      options.format === "image/jpeg" ? 0.95 : undefined
+    );
+  });
 }

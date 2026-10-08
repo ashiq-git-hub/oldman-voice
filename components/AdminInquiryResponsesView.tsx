@@ -5,6 +5,7 @@ import Link from "next/link";
 import { Question, ResponseItem } from "@/types/database";
 import { formatDateString } from "@/components/QuestionCard";
 import AdminResponseCard from "./AdminResponseCard";
+import AdminCarouselToolbar from "./AdminCarouselToolbar";
 
 interface AdminInquiryResponsesViewProps {
   question: Question;
@@ -47,15 +48,23 @@ export default function AdminInquiryResponsesView({
           &ldquo;{question.question}&rdquo;
         </h1>
 
-        <div className="mt-4 pt-3 border-t border-rule/60 flex items-center justify-between text-xs font-sans">
-          <span className="uppercase tracking-wider text-ink-muted">
-            {responses.length}{" "}
-            {responses.length === 1 ? "thought recorded" : "thoughts recorded"}
-          </span>
+        <div className="mt-5 pt-4 border-t border-rule/60 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+          <div className="flex items-center gap-3 text-xs font-sans">
+            <span className="uppercase tracking-wider text-ink-muted">
+              {responses.length}{" "}
+              {responses.length === 1 ? "thought recorded" : "thoughts recorded"}
+            </span>
+            <span className="text-rule">·</span>
+            <span className="text-[11px] text-ink-faint tracking-archive uppercase">
+              {question.is_active ? "Active inquiry" : "Past archive"}
+            </span>
+          </div>
 
-          <span className="text-[11px] text-ink-faint tracking-archive uppercase">
-            {question.is_active ? "Active inquiry" : "Past archive"}
-          </span>
+          <AdminCarouselToolbar
+            question={question}
+            responses={responses}
+            dateStr={formatDateString(question.question_date)}
+          />
         </div>
       </section>
 
