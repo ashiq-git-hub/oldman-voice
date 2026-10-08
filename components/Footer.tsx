@@ -5,7 +5,7 @@ export default function Footer() {
   const instagramUrl =
     process.env.NEXT_PUBLIC_INSTAGRAM_URL || "https://instagram.com/theoldman.keeps";
   const youtubeUrl =
-    process.env.NEXT_PUBLIC_YOUTUBE_URL || "https://www.youtube.com/@theoldman_voice";
+    process.env.NEXT_PUBLIC_YOUTUBE_URL || "https://www.youtube.com/@theoldman_keeps";
 
   return (
     <footer className="w-full max-w-3xl mx-auto px-4 sm:px-8 mt-auto pt-8 sm:pt-16 pb-8 sm:pb-12 text-center select-none">
@@ -49,7 +49,7 @@ export default function Footer() {
           target="_blank"
           rel="noopener noreferrer"
           className="text-ink-muted hover:text-ink transition-colors duration-200 inline-flex items-center gap-1.5 text-[11px] sm:text-xs tracking-archive uppercase font-sans"
-          title="YouTube @theoldman_voice"
+          title="YouTube @theoldman_keeps"
           aria-label="YouTube"
         >
           <svg

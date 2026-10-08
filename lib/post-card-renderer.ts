@@ -22,12 +22,12 @@ export interface PostDimensions {
   marginX: number;
 }
 
-export const DEFAULT_OUTRO_TEXT = `That's today's.
+export const DEFAULT_OUTRO_TEXT = `That’s today’s.
 
-If you want to leave one, the link's in my bio.
+If you want to leave *one*, the link’s in my bio.
 Nobody sees your name.
 
-I'll be here tomorrow too.
+I’ll be here tomorrow too.
 
 @theoldman.keeps`;
 
@@ -81,6 +81,7 @@ export async function ensureFontsLoaded(): Promise<void> {
     if ("fonts" in document) {
       await Promise.all([
         document.fonts.load('36px "Cormorant Garamond"'),
+        document.fonts.load('italic 36px "Cormorant Garamond"'),
         document.fonts.load('bold 60px "Playfair Display"'),
       ]);
     }
@@ -108,6 +109,15 @@ export async function ensureFontsLoaded(): Promise<void> {
         );
         const loadedCg = await cgFont.load();
         document.fonts.add(loadedCg);
+      }
+      if (!document.fonts.check('italic 36px "Cormorant Garamond"')) {
+        const cgItalicFont = new FontFace(
+          "Cormorant Garamond",
+          "url(/fonts/CormorantGaramond-Italic.ttf)",
+          { weight: "400", style: "italic" }
+        );
+        const loadedCgItalic = await cgItalicFont.load();
+        document.fonts.add(loadedCgItalic);
       }
     }
   } catch (err) {
@@ -335,55 +345,200 @@ export async function renderPostToCanvas(
 
   } else if (options.cardType === "outro") {
     // --- OUTRO CTA SLIDE ---
-    const fontSize = 35;
-    const lineHeight = Math.round(fontSize * 1.54);
-    const paragraphGap = Math.round(fontSize * 0.85);
+    // Typography specs:
+    // 1. "That's today's." -> Playfair Display Bold (exact same ink #48443B as Slide 1)
+    // 2. "@theoldman.keeps" -> Cormorant Garamond with softer lowered opacity ink
+    // 3. "If you want to leave one, the link's in my bio." -> Cormorant Garamond with 'one' in italic!
+    const baseBodyFontSize = options.aspectRatio === "1:1" ? 33 : options.aspectRatio === "9:16" ? 36 : 35;
+    const headlineFontSize = options.aspectRatio === "1:1" ? 44 : options.aspectRatio === "9:16" ? 50 : 48;
+    const handleFontSize = options.aspectRatio === "1:1" ? 31 : 33;
 
-    ctx.font = `${fontSize}px "Cormorant Garamond", Georgia, serif`;
+    const bodyLineHeight = Math.round(baseBodyFontSize * 1.54);
+    const headlineLineHeight = Math.round(headlineFontSize * 1.35);
+    const handleLineHeight = Math.round(handleFontSize * 1.45);
+    const paragraphGap = Math.round(baseBodyFontSize * 1.0);
 
+    const isHeadline = (line: string): boolean => {
+      const norm = line.trim().toLowerCase().replace(/[’']/g, "'");
+      return (
+        norm.startsWith("that's today's") ||
+        norm.startsWith("thats todays") ||
+        norm === "that's today's." ||
+        norm === "that's today's"
+      );
+    };
+
+    const isHandle = (line: string): boolean => {
+      return line.trim().startsWith("@");
+    };
+
+    // Helper to format contractions to typographic curly apostrophes
+    const curlyApostrophes = (str: string): string => {
+      return str
+        .replace(/(\w)'(\w)/g, "$1’$2")
+        .replace(/'s\b/gi, "’s")
+        .replace(/'t\b/gi, "’t")
+        .replace(/'ll\b/gi, "’ll")
+        .replace(/'ve\b/gi, "’ve")
+        .replace(/'re\b/gi, "’re")
+        .replace(/'d\b/gi, "’d");
+    };
+
+    interface OutroToken {
+      text: string;
+      isItalic: boolean;
+      isSpace: boolean;
+    }
+
+    const tokenizeBodyParagraph = (text: string): OutroToken[] => {
+      let cleaned = curlyApostrophes(text.trim());
+
+      // If no asterisks present, automatically italicize 'one' in 'leave one'
+      if (!cleaned.includes("*")) {
+        cleaned = cleaned.replace(/(\bleave\s+)(one)(,?\b)/gi, "$1*$2*$3");
+      }
+
+      const parts = cleaned.split(/(\*[^*]+\*)/g);
+      const tokens: OutroToken[] = [];
+
+      for (const part of parts) {
+        if (!part) continue;
+        const isItalic = part.startsWith("*") && part.endsWith("*");
+        const content = isItalic ? part.slice(1, -1) : part;
+
+        // Split preserving spaces and punctuation
+        const rawTokens = content.split(/(\s+)/);
+        for (const t of rawTokens) {
+          if (!t) continue;
+          tokens.push({
+            text: t,
+            isItalic,
+            isSpace: /^\s+$/.test(t),
+          });
+        }
+      }
+
+      return tokens;
+    };
+
+    interface OutroBlock {
+      type: "headline" | "body" | "handle" | "gap";
+      height: number;
+      text?: string;
+      segments?: Array<{ text: string; isItalic: boolean }>;
+    }
+
+    const blocks: OutroBlock[] = [];
     const rawParagraphs = options.text.trim().split("\n");
-    const renderLines: RenderLine[] = [];
 
     for (const p of rawParagraphs) {
       const trimmed = p.trim();
       if (!trimmed) {
-        renderLines.push({ text: "", isParagraphGap: true });
+        if (blocks.length > 0 && blocks[blocks.length - 1].type !== "gap") {
+          blocks.push({ type: "gap", height: paragraphGap });
+        }
         continue;
       }
 
-      const pWords = trimmed.split(/\s+/);
-      let curLine = "";
-      for (const w of pWords) {
-        const testLine = curLine ? `${curLine} ${w}` : w;
-        if (ctx.measureText(testLine).width <= contentW) {
-          curLine = testLine;
-        } else {
-          if (curLine) renderLines.push({ text: curLine });
-          curLine = w;
+      if (isHeadline(trimmed)) {
+        const headlineText = curlyApostrophes(trimmed);
+        blocks.push({
+          type: "headline",
+          text: headlineText,
+          height: headlineLineHeight,
+        });
+      } else if (isHandle(trimmed)) {
+        blocks.push({
+          type: "handle",
+          text: trimmed,
+          height: handleLineHeight,
+        });
+      } else {
+        // Body paragraph with potential wrapping and inline italic
+        const tokens = tokenizeBodyParagraph(trimmed);
+
+        const lines: Array<Array<{ text: string; isItalic: boolean }>> = [];
+        let currentLineSegments: Array<{ text: string; isItalic: boolean }> = [];
+        let currentLineWidth = 0;
+
+        for (const token of tokens) {
+          ctx.font = token.isItalic
+            ? `italic ${baseBodyFontSize}px "Cormorant Garamond", Georgia, serif`
+            : `${baseBodyFontSize}px "Cormorant Garamond", Georgia, serif`;
+          const tokenWidth = ctx.measureText(token.text).width;
+
+          if (!token.isSpace && currentLineWidth + tokenWidth > contentW && currentLineSegments.length > 0) {
+            lines.push(currentLineSegments);
+            currentLineSegments = [];
+            currentLineWidth = 0;
+          }
+
+          if (token.isSpace && currentLineSegments.length === 0) {
+            continue; // Skip leading space on wrapped line
+          }
+
+          const lastSeg = currentLineSegments[currentLineSegments.length - 1];
+          if (lastSeg && lastSeg.isItalic === token.isItalic) {
+            lastSeg.text += token.text;
+          } else {
+            currentLineSegments.push({ text: token.text, isItalic: token.isItalic });
+          }
+          currentLineWidth += tokenWidth;
+        }
+
+        if (currentLineSegments.length > 0) {
+          lines.push(currentLineSegments);
+        }
+
+        for (const lineSegments of lines) {
+          blocks.push({
+            type: "body",
+            height: bodyLineHeight,
+            segments: lineSegments,
+          });
         }
       }
-      if (curLine) renderLines.push({ text: curLine });
     }
 
-    let totalTextH = 0;
-    for (const item of renderLines) {
-      if (item.isParagraphGap) totalTextH += paragraphGap;
-      else totalTextH += lineHeight;
+    // Remove any trailing gap
+    while (blocks.length > 0 && blocks[blocks.length - 1].type === "gap") {
+      blocks.pop();
     }
 
+    const totalTextH = blocks.reduce((sum, b) => sum + b.height, 0);
     const availableH = dims.botRuleY - dims.topRuleY;
     let startY = dims.topRuleY + Math.floor((availableH - totalTextH) / 2);
 
-    ctx.fillStyle = colorResponseInk;
-    ctx.textBaseline = "top";
+    // Soft lowered opacity ink for handle @theoldman.keeps
+    const colorHandleInk = "rgba(72, 68, 59, 0.65)";
 
+    ctx.textBaseline = "top";
     let curY = startY;
-    for (const item of renderLines) {
-      if (item.isParagraphGap) {
-        curY += paragraphGap;
-      } else {
-        ctx.fillText(item.text, dims.marginX, curY);
-        curY += lineHeight;
+
+    for (const block of blocks) {
+      if (block.type === "gap") {
+        curY += block.height;
+      } else if (block.type === "headline" && block.text) {
+        ctx.font = `bold ${headlineFontSize}px "Playfair Display", Georgia, serif`;
+        ctx.fillStyle = colorQuestionInk; // exact same color #48443B as Slide 1!
+        ctx.fillText(block.text, dims.marginX, curY);
+        curY += block.height;
+      } else if (block.type === "handle" && block.text) {
+        ctx.font = `${handleFontSize}px "Cormorant Garamond", Georgia, serif`;
+        ctx.fillStyle = colorHandleInk; // lower opacity soft ink
+        ctx.fillText(block.text, dims.marginX, curY);
+        curY += block.height;
+      } else if (block.type === "body" && block.segments) {
+        let curX = dims.marginX;
+        ctx.fillStyle = colorResponseInk;
+        for (const seg of block.segments) {
+          ctx.font = seg.isItalic
+            ? `italic ${baseBodyFontSize}px "Cormorant Garamond", Georgia, serif`
+            : `${baseBodyFontSize}px "Cormorant Garamond", Georgia, serif`;
+          ctx.fillText(seg.text, curX, curY);
+          curX += ctx.measureText(seg.text).width;
+        }
+        curY += block.height;
       }
     }
 

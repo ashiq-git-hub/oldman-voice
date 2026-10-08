@@ -8,7 +8,7 @@ export default function Header() {
   const instagramUrl =
     process.env.NEXT_PUBLIC_INSTAGRAM_URL || "https://instagram.com/theoldman.keeps";
   const youtubeUrl =
-    process.env.NEXT_PUBLIC_YOUTUBE_URL || "https://www.youtube.com/@theoldman_voice";
+    process.env.NEXT_PUBLIC_YOUTUBE_URL || "https://www.youtube.com/@theoldman_keeps";
 
   return (
     <header className="w-full max-w-3xl mx-auto px-4 sm:px-8 pt-5 sm:pt-8 pb-4 sm:pb-6 select-none">
@@ -82,7 +82,7 @@ export default function Header() {
               target="_blank"
               rel="noopener noreferrer"
               className="text-ink-muted hover:text-ink transition-colors duration-200 py-1 flex items-center"
-              title="YouTube @theoldman_voice"
+              title="YouTube @theoldman_keeps"
               aria-label="YouTube channel"
             >
               <svg

@@ -19,6 +19,14 @@
 }
 
 @font-face {
+  font-family: "Cormorant Garamond";
+  src: url("/fonts/CormorantGaramond-Italic.ttf") format("truetype");
+  font-weight: 400;
+  font-style: italic;
+  font-display: swap;
+}
+
+@font-face {
   font-family: "Playfair Display";
   src: url("/fonts/PlayfairDisplay-Bold.ttf") format("truetype");
   font-weight: 700;
