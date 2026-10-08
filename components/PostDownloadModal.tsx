@@ -237,6 +237,22 @@ export default function PostDownloadModal({
         <div className="flex-1 overflow-y-auto p-4 sm:p-6 flex flex-col lg:flex-row gap-6">
           {/* Controls Column */}
           <div className="w-full lg:w-72 shrink-0 flex flex-col gap-4">
+            {/* If question card, allow tweaking line breaks */}
+            {cardType === "question" && (
+              <div>
+                <label className="block text-[11px] uppercase tracking-wider text-ink-faint font-sans mb-1 font-medium">
+                  Question Text & Line Breaks
+                </label>
+                <textarea
+                  rows={3}
+                  value={currentText}
+                  onChange={(e) => setCurrentText(e.target.value)}
+                  className="w-full text-xs font-serif p-2.5 bg-[#F4EFE6] border border-rule rounded-sm text-ink outline-none focus:border-brass leading-relaxed resize-none"
+                  placeholder="Enter question text..."
+                />
+              </div>
+            )}
+
             {/* If outro card, allow quick text adjustments */}
             {cardType === "outro" && (
               <div>
