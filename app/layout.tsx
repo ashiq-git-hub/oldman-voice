@@ -35,7 +35,7 @@ export const metadata: Metadata = {
     title: "theoldman.keeps — Everyone has something to say.",
     description:
       "A quiet place for questions worth answering and thoughts worth leaving behind.",
-    url: "https://theoldman-keeps.vercel.app",
+    url: "https://oldman-keeps.vercel.app",
     siteName: "theoldman.keeps",
     locale: "en_US",
     type: "website",
