@@ -3,7 +3,7 @@ import Footer from "@/components/Footer";
 import Link from "next/link";
 
 export const metadata = {
-  title: "About — oldman.voice",
+  title: "About — theoldman.keeps",
   description:
     "A small place for unfinished thoughts, honest answers, and questions worth sitting with.",
 };
@@ -28,7 +28,7 @@ export default function AboutPage() {
           {/* Editorial Content */}
           <div className="space-y-6 font-serif text-lg sm:text-xl text-ink-light leading-[1.8]">
             <p>
-              <strong className="font-normal text-ink">oldman.voice</strong> is a small place for
+              <strong className="font-normal text-ink">theoldman.keeps</strong> is a small place for
               unfinished thoughts, honest answers, and questions worth sitting with.
             </p>
 

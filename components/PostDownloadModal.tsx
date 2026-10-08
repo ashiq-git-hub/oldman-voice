@@ -95,7 +95,7 @@ export default function PostDownloadModal({
     try {
       const extension = format === "image/png" ? "png" : "jpg";
       const cleanDate = effectiveDateStr.replace(/[^a-zA-Z0-9]/g, "-").toLowerCase();
-      const filename = `theoldman-voice-${cleanDate}-${aspectRatio.replace(":", "x")}.${extension}`;
+      const filename = `theoldman-keeps-${cleanDate}-${aspectRatio.replace(":", "x")}.${extension}`;
 
       canvas.toBlob(
         (blob) => {

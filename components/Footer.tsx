@@ -3,7 +3,7 @@ import Link from "next/link";
 export default function Footer() {
   const currentYear = new Date().getFullYear();
   const instagramUrl =
-    process.env.NEXT_PUBLIC_INSTAGRAM_URL || "https://instagram.com/theoldman.voice";
+    process.env.NEXT_PUBLIC_INSTAGRAM_URL || "https://instagram.com/theoldman.keeps";
   const youtubeUrl =
     process.env.NEXT_PUBLIC_YOUTUBE_URL || "https://www.youtube.com/@theoldman_voice";
 
@@ -22,7 +22,7 @@ export default function Footer() {
           target="_blank"
           rel="noopener noreferrer"
           className="text-ink-muted hover:text-ink transition-colors duration-200 inline-flex items-center gap-1.5 text-[11px] sm:text-xs tracking-archive uppercase font-sans"
-          title="Instagram @theoldman.voice"
+          title="Instagram @theoldman.keeps"
           aria-label="Instagram"
         >
           <svg
@@ -71,7 +71,7 @@ export default function Footer() {
 
       {/* Archive and Copyright */}
       <div className="flex items-center justify-center gap-2.5 sm:gap-3 text-[11px] sm:text-xs tracking-archive text-ink-faint uppercase font-sans">
-        <span>oldman.voice</span>
+        <span>theoldman.keeps</span>
         <span>·</span>
         <span>{currentYear}</span>
         <span>·</span>

@@ -35,7 +35,7 @@ export default function AdminHeader() {
         <div className="flex items-center gap-4">
           <Link href="/admin" className="group">
             <span className="font-serif text-xl font-medium tracking-tight text-ink">
-              oldman.voice
+              theoldman.keeps
             </span>
             <span className="ml-2 text-[10px] tracking-[0.2em] uppercase text-brass font-sans">
               private archive

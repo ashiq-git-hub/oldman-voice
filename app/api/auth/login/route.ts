@@ -65,9 +65,12 @@ export async function POST(req: NextRequest) {
 
     // 4. Local Development Fallback (Strictly prohibited in production)
     if (process.env.NODE_ENV !== "production") {
+      const normalized = email.trim().toLowerCase();
       if (
-        email.trim().toLowerCase() === "owner@oldman.voice" ||
-        email.trim().toLowerCase() === "admin@oldman.voice"
+        normalized === "owner@theoldman.keeps" ||
+        normalized === "admin@theoldman.keeps" ||
+        normalized === "owner@oldman.voice" ||
+        normalized === "admin@oldman.voice"
       ) {
         const cookieStore = cookies();
         cookieStore.set(MOCK_ADMIN_COOKIE, "authenticated", {

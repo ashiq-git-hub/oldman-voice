@@ -18,7 +18,7 @@ const sansFont = Inter({
 });
 
 export const metadata: Metadata = {
-  title: "oldman.voice — Everyone has something to say.",
+  title: "theoldman.keeps — Everyone has something to say.",
   description:
     "A quiet place for questions worth answering and thoughts worth leaving behind.",
   keywords: [
@@ -26,22 +26,23 @@ export const metadata: Metadata = {
     "daily question",
     "literary journal",
     "journaling",
-    "oldman voice",
+    "theoldman keeps",
+    "oldman keeps",
     "quiet reflection",
   ],
-  authors: [{ name: "oldman.voice" }],
+  authors: [{ name: "theoldman.keeps" }],
   openGraph: {
-    title: "oldman.voice — Everyone has something to say.",
+    title: "theoldman.keeps — Everyone has something to say.",
     description:
       "A quiet place for questions worth answering and thoughts worth leaving behind.",
-    url: "https://oldman-voice.vercel.app",
-    siteName: "oldman.voice",
+    url: "https://theoldman-keeps.vercel.app",
+    siteName: "theoldman.keeps",
     locale: "en_US",
     type: "website",
   },
   twitter: {
     card: "summary_large_image",
-    title: "oldman.voice",
+    title: "theoldman.keeps",
     description: "Everyone has something to say.",
   },
   robots: {

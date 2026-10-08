@@ -6,7 +6,7 @@ import { usePathname } from "next/navigation";
 export default function Header() {
   const pathname = usePathname();
   const instagramUrl =
-    process.env.NEXT_PUBLIC_INSTAGRAM_URL || "https://instagram.com/theoldman.voice";
+    process.env.NEXT_PUBLIC_INSTAGRAM_URL || "https://instagram.com/theoldman.keeps";
   const youtubeUrl =
     process.env.NEXT_PUBLIC_YOUTUBE_URL || "https://www.youtube.com/@theoldman_voice";
 
@@ -19,7 +19,7 @@ export default function Header() {
           className="group inline-flex flex-col text-left transition-opacity hover:opacity-85"
         >
           <span className="font-serif text-[1.4rem] sm:text-3xl font-medium tracking-tight text-ink leading-tight">
-            oldman.voice
+            theoldman.keeps
           </span>
           <span className="text-[9px] sm:text-[10px] tracking-[0.2em] uppercase text-ink-muted mt-0.5 font-sans">
             daily reflections
@@ -57,7 +57,7 @@ export default function Header() {
               target="_blank"
               rel="noopener noreferrer"
               className="text-ink-muted hover:text-ink transition-colors duration-200 py-1 flex items-center"
-              title="Instagram @theoldman.voice"
+              title="Instagram @theoldman.keeps"
               aria-label="Instagram profile"
             >
               <svg

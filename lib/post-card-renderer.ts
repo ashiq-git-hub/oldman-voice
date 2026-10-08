@@ -195,10 +195,10 @@ export async function renderPostToCanvas(
   ctx.lineTo(dims.width - dims.marginX, dims.botRuleY);
   ctx.stroke();
 
-  // 4. Footer ("theoldman.voice")
+  // 4. Footer ("theoldman.keeps")
   ctx.fillStyle = colorMeta;
   ctx.font = '22px "Cormorant Garamond", Georgia, serif';
-  drawTrackedText(ctx, "theoldman.voice", dims.marginX, dims.botY, 3.2, "left");
+  drawTrackedText(ctx, "theoldman.keeps", dims.marginX, dims.botY, 3.2, "left");
 
   // 5. Quote Body - dynamic sizing and wrapping
   const cleanText = options.text.trim();

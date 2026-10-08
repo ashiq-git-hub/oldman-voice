@@ -55,7 +55,7 @@ export default function AdminLoginPage() {
       <main className="w-full max-w-sm mx-auto px-6 py-12 my-auto">
         <div className="text-center mb-8">
           <h1 className="font-serif text-3xl font-normal text-ink tracking-tight">
-            oldman.voice
+            theoldman.keeps
           </h1>
           <p className="text-xs uppercase tracking-[0.2em] text-brass font-sans mt-1">
             private archive
@@ -78,7 +78,7 @@ export default function AdminLoginPage() {
               autoFocus
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              placeholder="owner@oldman.voice"
+              placeholder="owner@theoldman.keeps"
               className="w-full bg-[#FAF7F0] border border-rule px-4 py-2.5 text-sm text-ink font-sans outline-none focus:border-brass focus-visible:ring-1 focus-visible:ring-brass transition-colors rounded-none placeholder:text-ink-faint/50"
             />
           </div>
@@ -129,7 +129,7 @@ export default function AdminLoginPage() {
         </form>
 
         <p className="mt-8 text-center text-[11px] text-ink-faint leading-relaxed font-sans">
-          This area is reserved for the private curator of oldman.voice.
+          This area is reserved for the private curator of theoldman.keeps.
           <br />
           No public registrations are permitted.
         </p>
@@ -137,7 +137,7 @@ export default function AdminLoginPage() {
 
       {/* Footer copyright */}
       <footer className="w-full max-w-4xl mx-auto px-6 py-6 text-center text-xs text-ink-faint font-sans">
-        oldman.voice · restricted repository
+        theoldman.keeps · restricted repository
       </footer>
     </div>
   );
