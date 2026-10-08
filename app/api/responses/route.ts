@@ -2,7 +2,8 @@ import { NextRequest, NextResponse } from "next/server";
 import { validateResponseSubmission, isValidQuestionId } from "@/lib/validation";
 import { checkRateLimit } from "@/lib/rate-limit";
 import { createClient, isSupabaseConfigured } from "@/lib/supabase/server";
-import { mockStore } from "@/lib/mock-store";
+import { createAdminClient } from "@/lib/supabase/admin";
+import { mockStore, getTodayDateString } from "@/lib/mock-store";
 
 export const dynamic = "force-dynamic";
 
@@ -60,13 +61,27 @@ export async function POST(req: NextRequest) {
     }
 
     // 5. Persistence - Store ONLY question_id and response text (Zero identity or metadata)
-    // Anonymous public submissions MUST strictly use the anon client so Row Level Security is enforced.
     if (isSupabaseConfigured()) {
-      const supabase = createClient();
+      const supabase = createAdminClient() || createClient();
       if (!supabase) {
         return NextResponse.json(
           { error: "Unable to record your response. Please try again." },
           { status: 500 }
+        );
+      }
+
+      // Verify question exists, is active, and is scheduled on or before today in IST
+      const todayStr = getTodayDateString();
+      const { data: qData } = await supabase
+        .from("questions")
+        .select("id, question_date, is_active")
+        .eq("id", questionId)
+        .single();
+
+      if (!qData || !qData.is_active || qData.question_date > todayStr) {
+        return NextResponse.json(
+          { error: "Responses are not accepted for this inquiry." },
+          { status: 400 }
         );
       }
 

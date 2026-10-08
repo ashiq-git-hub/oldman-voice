@@ -23,7 +23,7 @@ export async function GET(
   }
 
   if (isSupabaseConfigured()) {
-    const supabase = createClient() || createAdminClient();
+    const supabase = createAdminClient() || createClient();
     if (!supabase) {
       return NextResponse.json({ error: "Database unavailable." }, { status: 500 });
     }

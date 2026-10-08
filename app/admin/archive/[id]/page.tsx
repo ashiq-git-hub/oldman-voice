@@ -20,7 +20,7 @@ async function getInquiryData(id: string): Promise<{
   responses: ResponseItem[];
 }> {
   if (isSupabaseConfigured()) {
-    const supabase = createClient() || createAdminClient();
+    const supabase = createAdminClient() || createClient();
     if (supabase) {
       const { data: qData } = await supabase
         .from("questions")

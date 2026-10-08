@@ -5,6 +5,7 @@ import { Question, ResponseItem } from "@/types/database";
 import PostDownloadModal from "./PostDownloadModal";
 import { exportFullCarouselZip } from "@/lib/carousel-exporter";
 import { formatDateString } from "./QuestionCard";
+import { getTodayDateString } from "@/lib/mock-store";
 
 interface AdminCarouselToolbarProps {
   question: Question | null;
@@ -27,7 +28,7 @@ export default function AdminCarouselToolbar({
     dateStr ||
     (question.question_date
       ? formatDateString(question.question_date)
-      : formatDateString(new Date().toISOString().split("T")[0]));
+      : formatDateString(getTodayDateString()));
 
   const handleDownloadFullCarousel = async () => {
     setIsZipping(true);

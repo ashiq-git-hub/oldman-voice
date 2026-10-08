@@ -9,6 +9,7 @@ import {
   DEFAULT_OUTRO_TEXT,
 } from "@/lib/post-card-renderer";
 import { formatDateString } from "@/components/QuestionCard";
+import { getTodayDateString } from "@/lib/mock-store";
 
 interface PostDownloadModalProps {
   isOpen: boolean;
@@ -65,7 +66,7 @@ export default function PostDownloadModal({
         // Fallback
       }
     }
-    const today = new Date().toISOString().split("T")[0];
+    const today = getTodayDateString();
     return formatDateString(today);
   }, [dateStr, response?.created_at]);
 

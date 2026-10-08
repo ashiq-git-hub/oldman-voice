@@ -4,17 +4,19 @@ import QuestionCard from "@/components/QuestionCard";
 import ResponseForm from "@/components/ResponseForm";
 import { mockStore, getTodayDateString } from "@/lib/mock-store";
 import { createClient, isSupabaseConfigured } from "@/lib/supabase/server";
+import { createAdminClient } from "@/lib/supabase/admin";
 import { Question } from "@/types/database";
 
-// Revalidate page dynamically
-export const revalidate = 60; // 1 minute revalidation for fresh daily questions
+// Ensure page always renders dynamically based on the current calendar date in IST
+export const dynamic = "force-dynamic";
+export const revalidate = 0;
 
 async function getTodayQuestion(): Promise<Question | null> {
   const todayStr = getTodayDateString();
 
   if (isSupabaseConfigured()) {
     try {
-      const supabase = createClient();
+      const supabase = createAdminClient() || createClient();
       if (supabase) {
         const { data, error } = await supabase
           .from("questions")

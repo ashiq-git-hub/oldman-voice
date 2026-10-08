@@ -20,7 +20,7 @@ interface QuestionQueryRow {
 
 async function getAdminQuestions(): Promise<QuestionWithResponseCount[]> {
   if (isSupabaseConfigured()) {
-    const supabase = createClient() || createAdminClient();
+    const supabase = createAdminClient() || createClient();
     if (supabase) {
       const { data, error } = await supabase
         .from("questions")

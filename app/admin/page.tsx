@@ -17,7 +17,7 @@ async function getTodayAdminData(): Promise<{
   const todayStr = getTodayDateString();
 
   if (isSupabaseConfigured()) {
-    const supabase = createClient() || createAdminClient();
+    const supabase = createAdminClient() || createClient();
     if (supabase) {
       // Find today's question
       const { data: qData } = await supabase

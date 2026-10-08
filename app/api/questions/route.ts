@@ -13,7 +13,7 @@ export async function GET() {
   const todayStr = getTodayDateString();
 
   if (isSupabaseConfigured()) {
-    const supabase = createClient() || createAdminClient();
+    const supabase = createAdminClient() || createClient();
     if (!supabase) {
       return NextResponse.json({ error: "Database unavailable" }, { status: 500 });
     }

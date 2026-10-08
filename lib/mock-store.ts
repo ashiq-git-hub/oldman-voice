@@ -5,22 +5,52 @@ import { Question, QuestionWithResponseCount, ResponseItem } from "@/types/datab
  * when Supabase credentials are not yet configured in .env.local.
  */
 
-// Helper to get formatted current date YYYY-MM-DD
-export function getTodayDateString(): string {
-  const now = new Date();
-  const year = now.getFullYear();
-  const month = String(now.getMonth() + 1).padStart(2, "0");
-  const day = String(now.getDate()).padStart(2, "0");
-  return `${year}-${month}-${day}`;
+export const APP_TIMEZONE =
+  process.env.APP_TIMEZONE ||
+  process.env.NEXT_PUBLIC_APP_TIMEZONE ||
+  "Asia/Kolkata";
+
+/**
+ * Returns today's date formatted as YYYY-MM-DD in the app's timezone (default IST / Asia/Kolkata).
+ * Guarantees correct midnight rollover across Vercel serverless environments.
+ */
+export function getTodayDateString(timeZone: string = APP_TIMEZONE): string {
+  try {
+    const formatter = new Intl.DateTimeFormat("en-CA", {
+      timeZone,
+      year: "numeric",
+      month: "2-digit",
+      day: "2-digit",
+    });
+    return formatter.format(new Date());
+  } catch {
+    const now = new Date();
+    const year = now.getFullYear();
+    const month = String(now.getMonth() + 1).padStart(2, "0");
+    const day = String(now.getDate()).padStart(2, "0");
+    return `${year}-${month}-${day}`;
+  }
 }
 
-export function getOffsetDateString(daysOffset: number): string {
-  const date = new Date();
-  date.setDate(date.getDate() + daysOffset);
-  const year = date.getFullYear();
-  const month = String(date.getMonth() + 1).padStart(2, "0");
-  const day = String(date.getDate()).padStart(2, "0");
-  return `${year}-${month}-${day}`;
+/**
+ * Returns an offset date formatted as YYYY-MM-DD in the app's timezone (default IST / Asia/Kolkata).
+ */
+export function getOffsetDateString(daysOffset: number, timeZone: string = APP_TIMEZONE): string {
+  const target = new Date(Date.now() + daysOffset * 86400000);
+  try {
+    const formatter = new Intl.DateTimeFormat("en-CA", {
+      timeZone,
+      year: "numeric",
+      month: "2-digit",
+      day: "2-digit",
+    });
+    return formatter.format(target);
+  } catch {
+    const year = target.getFullYear();
+    const month = String(target.getMonth() + 1).padStart(2, "0");
+    const day = String(target.getDate()).padStart(2, "0");
+    return `${year}-${month}-${day}`;
+  }
 }
 
 const initialQuestions: Question[] = [
