@@ -190,7 +190,7 @@ export default function AdminWritesStudio() {
   };
 
   return (
-    <div className="w-full max-w-6xl mx-auto px-4 sm:px-8 py-6 sm:py-10">
+    <div className="w-full max-w-6xl mx-auto px-3 sm:px-8 py-5 sm:py-10">
       {/* Category Masthead */}
       <div className="mb-6 sm:mb-8 pb-5 border-b border-rule">
         <div className="flex items-center gap-2 mb-1.5">
@@ -201,14 +201,14 @@ export default function AdminWritesStudio() {
         </div>
         <div className="flex flex-col sm:flex-row sm:items-baseline justify-between gap-2">
           <div>
-            <h1 className="font-serif text-2xl sm:text-3xl text-ink font-normal tracking-tight">
+            <h1 className="font-serif text-2xl sm:text-3xl text-ink font-normal tracking-tight break-words">
               Old Man Writes
             </h1>
             <p className="text-xs sm:text-sm text-ink-muted font-sans mt-1">
               Enter your poems, journal entries, and reflections. Renders finished high-resolution Instagram posts on tactile dusty rose stationery.
             </p>
           </div>
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2 pt-1 sm:pt-0">
             <span className="inline-flex items-center gap-1.5 px-2.5 py-1 text-[11px] bg-[#E8D3D1] border border-[#C9A3A0] text-[#49332F] rounded-sm font-sans font-medium">
               <span className="w-2 h-2 rounded-full bg-[#C9A3A0]" />
               Dusty Rose Palette (#C9A3A0)
@@ -218,9 +218,9 @@ export default function AdminWritesStudio() {
       </div>
 
       {/* Studio Workspace: Editor + Canvas Preview */}
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 sm:gap-8 items-start">
         {/* Left Column: Editor Controls (5 cols) */}
-        <div className="lg:col-span-5 flex flex-col gap-5 bg-[#FAF7F0] border border-rule p-5 sm:p-6 rounded-sm shadow-sm">
+        <div className="lg:col-span-5 flex flex-col gap-5 bg-[#FAF7F0] border border-rule p-4 sm:p-6 rounded-sm shadow-sm">
           {/* Date Selection */}
           <div>
             <div className="flex items-center justify-between mb-1.5">
@@ -239,7 +239,7 @@ export default function AdminWritesStudio() {
               type="date"
               value={selectedDate}
               onChange={(e) => setSelectedDate(e.target.value)}
-              className="w-full text-xs font-sans px-3 py-2 bg-[#F4EFE6] border border-rule rounded-sm text-ink outline-none focus:border-[#745A55] transition-colors"
+              className="w-full text-base sm:text-xs font-sans px-3 py-2 bg-[#F4EFE6] border border-rule rounded-sm text-ink outline-none focus:border-[#745A55] transition-colors"
             />
           </div>
 
@@ -292,7 +292,7 @@ export default function AdminWritesStudio() {
               value={text}
               onChange={(e) => setText(e.target.value)}
               placeholder="Paste or enter your original poem, journal entry, or personal reflection here...&#10;&#10;Punctuation, line breaks, and wording are preserved exactly as entered."
-              className="w-full text-sm font-serif p-3 bg-[#F4EFE6] border border-rule rounded-sm text-ink outline-none focus:border-[#745A55] leading-relaxed resize-y min-h-[180px]"
+              className="w-full text-base sm:text-sm font-serif p-3 bg-[#F4EFE6] border border-rule rounded-sm text-ink outline-none focus:border-[#745A55] leading-relaxed resize-y min-h-[180px]"
             />
             {/* Dynamic Length Guidance */}
             <div
@@ -316,7 +316,7 @@ export default function AdminWritesStudio() {
             <label className="block text-[11px] uppercase tracking-wider text-ink-faint font-sans mb-1.5 font-medium">
               Aspect Ratio
             </label>
-            <div className="grid grid-cols-3 gap-2">
+            <div className="grid grid-cols-3 gap-1.5 sm:gap-2">
               {[
                 {
                   id: "4:5" as PostAspectRatio,
@@ -341,16 +341,16 @@ export default function AdminWritesStudio() {
                   key={item.id}
                   type="button"
                   onClick={() => setAspectRatio(item.id)}
-                  className={`flex flex-col items-start p-2 text-left border rounded-sm transition-all ${
+                  className={`flex flex-col items-start p-1.5 sm:p-2 text-left border rounded-sm transition-all ${
                     aspectRatio === item.id
                       ? "bg-[#E8D3D1] border-[#745A55] text-[#49332F] font-medium shadow-sm ring-1 ring-[#745A55]/20"
                       : "bg-[#FAF7F0] border-rule/80 text-ink-muted hover:border-ink/40 hover:bg-[#F6F1E6]"
                   }`}
                 >
                   <div className="flex items-center justify-between w-full">
-                    <span className="font-sans text-xs">{item.label}</span>
+                    <span className="font-sans text-[11px] sm:text-xs">{item.label}</span>
                     {item.badge && (
-                      <span className="text-[8px] uppercase tracking-wider bg-[#745A55]/15 text-[#745A55] px-1 py-0.5 rounded-sm font-semibold">
+                      <span className="text-[8px] uppercase tracking-wider bg-[#745A55]/15 text-[#745A55] px-1 py-0.5 rounded-sm font-semibold hidden sm:inline">
                         {item.badge}
                       </span>
                     )}
@@ -372,7 +372,7 @@ export default function AdminWritesStudio() {
               <button
                 type="button"
                 onClick={() => setFormat("image/png")}
-                className={`py-1.5 px-3 text-xs tracking-wider uppercase font-sans border rounded-sm transition-all ${
+                className={`py-2 px-3 text-xs tracking-wider uppercase font-sans border rounded-sm transition-all ${
                   format === "image/png"
                     ? "bg-[#E8D3D1] border-[#745A55] text-[#49332F] font-semibold"
                     : "bg-[#FAF7F0] border-rule/80 text-ink-muted hover:border-ink/40"
@@ -383,7 +383,7 @@ export default function AdminWritesStudio() {
               <button
                 type="button"
                 onClick={() => setFormat("image/jpeg")}
-                className={`py-1.5 px-3 text-xs tracking-wider uppercase font-sans border rounded-sm transition-all ${
+                className={`py-2 px-3 text-xs tracking-wider uppercase font-sans border rounded-sm transition-all ${
                   format === "image/jpeg"
                     ? "bg-[#E8D3D1] border-[#745A55] text-[#49332F] font-semibold"
                     : "bg-[#FAF7F0] border-rule/80 text-ink-muted hover:border-ink/40"
@@ -455,7 +455,7 @@ export default function AdminWritesStudio() {
         </div>
 
         {/* Right Column: Live High-Resolution Preview (7 cols) */}
-        <div className="lg:col-span-7 flex flex-col items-center justify-center bg-[#E5D7D5]/70 border border-rule/80 rounded-sm p-4 sm:p-8 min-h-[500px] overflow-hidden relative shadow-inner">
+        <div className="lg:col-span-7 flex flex-col items-center justify-center bg-[#E5D7D5]/70 border border-rule/80 rounded-sm p-3 sm:p-8 min-h-[320px] sm:min-h-[500px] overflow-hidden relative shadow-inner">
           {/* Live rendering status overlay */}
           {isRendering && (
             <div className="absolute inset-0 bg-[#E5D7D5]/80 backdrop-blur-[1px] flex items-center justify-center z-20">
@@ -470,11 +470,11 @@ export default function AdminWritesStudio() {
           <div className="relative flex items-center justify-center w-full">
             <canvas
               ref={canvasRef}
-              className="max-h-[78vh] w-auto max-w-full rounded-sm object-contain shadow-2xl ring-1 ring-black/10"
+              className="max-h-[58vh] sm:max-h-[78vh] w-auto max-w-full rounded-sm object-contain shadow-2xl ring-1 ring-black/10"
             />
           </div>
 
-          <p className="mt-4 text-[11px] text-[#745A55] tracking-wider uppercase font-sans select-none">
+          <p className="mt-3 sm:mt-4 text-[10px] sm:text-[11px] text-[#745A55] tracking-wider uppercase font-sans select-none text-center">
             Live Preview · Cormorant Garamond · Dusty Rose (#C9A3A0)
           </p>
         </div>

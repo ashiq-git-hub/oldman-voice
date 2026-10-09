@@ -193,7 +193,7 @@ export default function PostDownloadModal({
       : "Reader Response Post");
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-6 bg-ink/75 backdrop-blur-sm animate-fade-in">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-2 sm:p-6 bg-ink/75 backdrop-blur-sm animate-fade-in">
       {/* Click outside backdrop */}
       <div
         className="fixed inset-0"
@@ -202,9 +202,9 @@ export default function PostDownloadModal({
       />
 
       {/* Modal Dialog Card */}
-      <div className="relative w-full max-w-4xl max-h-[92vh] flex flex-col bg-[#FAF7F0] border border-rule shadow-2xl rounded-sm overflow-hidden z-10">
+      <div className="relative w-full max-w-4xl max-h-[96vh] sm:max-h-[92vh] flex flex-col bg-[#FAF7F0] border border-rule shadow-2xl rounded-sm overflow-hidden z-10">
         {/* Modal Top Bar */}
-        <header className="flex items-center justify-between px-5 sm:px-8 py-4 border-b border-rule bg-[#F4EFE6]/70">
+        <header className="flex items-center justify-between px-4 sm:px-8 py-3.5 sm:py-4 border-b border-rule bg-[#F4EFE6]/70">
           <div>
             <div className="flex items-center gap-2">
               <span className="w-2.5 h-px bg-brass inline-block" />
@@ -212,7 +212,7 @@ export default function PostDownloadModal({
                 {cardType === "writes" ? "Old Man Writes Generator" : "Instagram Carousel Post Generator"}
               </p>
             </div>
-            <h2 className="font-serif text-lg sm:text-xl text-ink font-normal">
+            <h2 className="font-serif text-lg sm:text-xl text-ink font-normal break-words">
               {modalTitle}
             </h2>
           </div>
@@ -240,7 +240,7 @@ export default function PostDownloadModal({
         </header>
 
         {/* Modal Body: Controls & Preview */}
-        <div className="flex-1 overflow-y-auto p-4 sm:p-6 flex flex-col lg:flex-row gap-6">
+        <div className="flex-1 overflow-y-auto p-3.5 sm:p-6 flex flex-col lg:flex-row gap-5 sm:gap-6">
           {/* Controls Column */}
           <div className="w-full lg:w-72 shrink-0 flex flex-col gap-4">
             {/* If question card, allow tweaking line breaks */}
@@ -253,7 +253,7 @@ export default function PostDownloadModal({
                   rows={3}
                   value={currentText}
                   onChange={(e) => setCurrentText(e.target.value)}
-                  className="w-full text-xs font-serif p-2.5 bg-[#F4EFE6] border border-rule rounded-sm text-ink outline-none focus:border-brass leading-relaxed resize-none"
+                  className="w-full text-base sm:text-xs font-serif p-2.5 bg-[#F4EFE6] border border-rule rounded-sm text-ink outline-none focus:border-brass leading-relaxed resize-none"
                   placeholder="Enter question text..."
                 />
               </div>
@@ -269,7 +269,7 @@ export default function PostDownloadModal({
                   rows={5}
                   value={currentText}
                   onChange={(e) => setCurrentText(e.target.value)}
-                  className="w-full text-xs font-serif p-2.5 bg-[#F4EFE6] border border-rule rounded-sm text-ink outline-none focus:border-brass leading-relaxed resize-none"
+                  className="w-full text-base sm:text-xs font-serif p-2.5 bg-[#F4EFE6] border border-rule rounded-sm text-ink outline-none focus:border-brass leading-relaxed resize-none"
                 />
               </div>
             )}
@@ -284,7 +284,7 @@ export default function PostDownloadModal({
                   rows={6}
                   value={currentText}
                   onChange={(e) => setCurrentText(e.target.value)}
-                  className="w-full text-xs font-serif p-2.5 bg-[#FAF7F0] border border-rule rounded-sm text-ink outline-none focus:border-[#745A55] leading-relaxed resize-none"
+                  className="w-full text-base sm:text-xs font-serif p-2.5 bg-[#FAF7F0] border border-rule rounded-sm text-ink outline-none focus:border-[#745A55] leading-relaxed resize-none"
                   placeholder="Enter or paste original writing..."
                 />
               </div>
@@ -295,7 +295,7 @@ export default function PostDownloadModal({
               <label className="block text-[11px] uppercase tracking-wider text-ink-faint font-sans mb-2 font-medium">
                 Aspect Ratio
               </label>
-              <div className="grid grid-cols-3 lg:grid-cols-1 gap-2">
+              <div className="grid grid-cols-3 lg:grid-cols-1 gap-1.5 sm:gap-2">
                 {[
                   {
                     id: "4:5" as PostAspectRatio,
@@ -320,18 +320,18 @@ export default function PostDownloadModal({
                     key={item.id}
                     type="button"
                     onClick={() => setAspectRatio(item.id)}
-                    className={`flex flex-col items-start p-2.5 sm:p-3 text-left border rounded-sm transition-all ${
+                    className={`flex flex-col items-start p-2 sm:p-3 text-left border rounded-sm transition-all ${
                       aspectRatio === item.id
                         ? "bg-[#F3ECE0] border-ink text-ink shadow-sm ring-1 ring-ink/10"
                         : "bg-[#FAF7F0] border-rule/80 text-ink-muted hover:border-ink/50 hover:bg-[#F6F1E6]"
                     }`}
                   >
                     <div className="flex items-center justify-between w-full">
-                      <span className="font-sans text-xs font-medium tracking-wide">
+                      <span className="font-sans text-[11px] sm:text-xs font-medium tracking-wide">
                         {item.label}
                       </span>
                       {item.badge && (
-                        <span className="text-[9px] uppercase tracking-wider bg-brass/20 text-brass px-1.5 py-0.5 rounded-sm font-semibold">
+                        <span className="text-[8px] sm:text-[9px] uppercase tracking-wider bg-brass/20 text-brass px-1.5 py-0.5 rounded-sm font-semibold">
                           {item.badge}
                         </span>
                       )}
@@ -446,7 +446,7 @@ export default function PostDownloadModal({
           </div>
 
           {/* Canvas Preview Area */}
-          <div className="flex-1 flex flex-col items-center justify-center bg-[#EFE9DC]/60 border border-rule/80 rounded-sm p-4 sm:p-6 min-h-[360px] overflow-hidden relative">
+          <div className="flex-1 flex flex-col items-center justify-center bg-[#EFE9DC]/60 border border-rule/80 rounded-sm p-3 sm:p-6 min-h-[260px] sm:min-h-[360px] overflow-hidden relative">
             {isRendering && (
               <div className="absolute inset-0 bg-[#EFE9DC]/75 backdrop-blur-[1px] flex items-center justify-center z-10">
                 <div className="flex items-center gap-2 text-xs uppercase tracking-wider text-ink-muted">
@@ -459,7 +459,7 @@ export default function PostDownloadModal({
             {/* The Canvas element */}
             <canvas
               ref={canvasRef}
-              className="max-h-[58vh] w-auto max-w-full rounded-sm object-contain shadow-xl ring-1 ring-black/5"
+              className="max-h-[46vh] sm:max-h-[58vh] w-auto max-w-full rounded-sm object-contain shadow-xl ring-1 ring-black/5"
             />
           </div>
         </div>

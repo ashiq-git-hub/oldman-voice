@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef } from "react";
+import { usePathname } from "next/navigation";
 
 interface Particle {
   x: number;
@@ -31,8 +32,13 @@ interface TrailMote {
 
 export default function DustParticles() {
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
+  const pathname = usePathname();
+  const isAdmin = pathname?.startsWith("/admin");
 
   useEffect(() => {
+    // Completely skip particle animation loop on admin pages to keep the management interface fast & responsive
+    if (isAdmin) return;
+
     const canvas = canvasRef.current;
     if (!canvas) return;
 
@@ -59,9 +65,13 @@ export default function DustParticles() {
       "160, 136, 92",  // Warm parchment brass
     ];
 
-    // Compute particle count — rich, ultra-dense field of small dust dots
+    // Compute particle count — lightweight on mobile to prevent CPU/battery strain; rich on desktop
     const getParticleCount = () => {
       const area = window.innerWidth * window.innerHeight;
+      const isMobile = window.innerWidth < 768;
+      if (isMobile) {
+        return Math.min(Math.max(Math.floor(area / 3500), 40), 90);
+      }
       return Math.min(Math.max(Math.floor(area / 700), 800), 2400);
     };
 
@@ -341,7 +351,9 @@ export default function DustParticles() {
       window.removeEventListener("resize", handleResize);
       document.removeEventListener("visibilitychange", handleVisibilityChange);
     };
-  }, []);
+  }, [isAdmin]);
+
+  if (isAdmin) return null;
 
   return (
     <canvas

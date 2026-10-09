@@ -133,9 +133,9 @@ export default function AdminQuestionManager({
   return (
     <div className="space-y-12">
       {/* Editor Box */}
-      <section className="bg-[#FAF7F0] border border-rule p-6 sm:p-8 rounded-sm">
-        <div className="border-b border-rule pb-4 mb-6 flex items-center justify-between">
-          <h2 className="font-serif text-2xl text-ink font-normal">
+      <section className="bg-[#FAF7F0] border border-rule p-4 sm:p-8 rounded-sm">
+        <div className="border-b border-rule pb-4 mb-5 sm:mb-6 flex items-center justify-between">
+          <h2 className="font-serif text-xl sm:text-2xl text-ink font-normal">
             {editingId ? "Edit Question" : "Compose Daily Question"}
           </h2>
           <span className="text-[11px] uppercase tracking-archive text-brass font-sans">
@@ -143,8 +143,8 @@ export default function AdminQuestionManager({
           </span>
         </div>
 
-        <form onSubmit={handleSubmit} className="space-y-6">
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
+        <form onSubmit={handleSubmit} className="space-y-5 sm:space-y-6">
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-5 sm:gap-6">
             <div>
               <label
                 htmlFor="q-date"
@@ -158,7 +158,7 @@ export default function AdminQuestionManager({
                 required
                 value={questionDate}
                 onChange={(e) => setQuestionDate(e.target.value)}
-                className="w-full bg-[#F4F0E7] border border-rule px-4 py-2.5 text-sm text-ink font-sans outline-none focus:border-brass focus-visible:ring-1 focus-visible:ring-brass transition-colors rounded-none"
+                className="w-full bg-[#F4F0E7] border border-rule px-4 py-2.5 text-base sm:text-sm text-ink font-sans outline-none focus:border-brass focus-visible:ring-1 focus-visible:ring-brass transition-colors rounded-none"
               />
               <span className="text-[11px] text-ink-faint mt-1 block">
                 {questionDate === todayStr ? "Scheduled for Today" : questionDate > todayStr ? "Future date" : "Past date"}
@@ -180,7 +180,7 @@ export default function AdminQuestionManager({
                 value={questionText}
                 onChange={(e) => setQuestionText(e.target.value)}
                 placeholder="What is something you hope never changes?"
-                className="w-full bg-[#F4F0E7] border border-rule px-4 py-2.5 font-serif text-lg text-ink placeholder:text-ink-faint/50 placeholder:italic outline-none focus:border-brass focus-visible:ring-1 focus-visible:ring-brass transition-colors rounded-none"
+                className="w-full bg-[#F4F0E7] border border-rule px-4 py-2.5 font-serif text-base sm:text-lg text-ink placeholder:text-ink-faint/50 placeholder:italic outline-none focus:border-brass focus-visible:ring-1 focus-visible:ring-brass transition-colors rounded-none"
               />
               <div className="flex justify-between items-center text-[11px] text-ink-faint mt-1">
                 <span>Thought-provoking, quiet, and reflective.</span>
@@ -200,12 +200,12 @@ export default function AdminQuestionManager({
             </p>
           )}
 
-          <div className="flex items-center justify-end gap-4 pt-2 border-t border-rule/50">
+          <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-end gap-3 sm:gap-4 pt-2 border-t border-rule/50">
             {editingId && (
               <button
                 type="button"
                 onClick={handleCancelEdit}
-                className="text-xs uppercase tracking-archive text-ink-faint hover:text-ink font-sans focus-visible:outline-none focus-visible:underline"
+                className="text-xs uppercase tracking-archive text-ink-faint hover:text-ink font-sans focus-visible:outline-none focus-visible:underline py-2 text-center"
               >
                 Cancel
               </button>
@@ -214,7 +214,7 @@ export default function AdminQuestionManager({
             <button
               type="submit"
               disabled={isSubmitting}
-              className="vintage-btn px-6 py-2.5 bg-ink text-parchment hover:bg-charcoal active:bg-ink-light focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brass focus-visible:ring-offset-2 focus-visible:ring-offset-parchment disabled:opacity-50 text-xs font-medium tracking-archive uppercase rounded-none transition-all shadow-sm"
+              className="vintage-btn justify-center px-6 py-2.5 bg-ink text-parchment hover:bg-charcoal active:bg-ink-light focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brass focus-visible:ring-offset-2 focus-visible:ring-offset-parchment disabled:opacity-50 text-xs font-medium tracking-archive uppercase rounded-none transition-all shadow-sm w-full sm:w-auto"
             >
               {isSubmitting ? (
                 <span>saving inquiry...</span>
@@ -245,13 +245,13 @@ export default function AdminQuestionManager({
             return (
               <div
                 key={q.id}
-                className={`p-5 bg-[#FAF7F0] border transition-colors flex flex-col sm:flex-row sm:items-center justify-between gap-4 ${
+                className={`p-4 sm:p-5 bg-[#FAF7F0] border transition-colors flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-4 ${
                   isToday
                     ? "border-brass bg-[#FAF7F0]"
                     : "border-rule hover:border-ink/30"
                 }`}
               >
-                <div className="space-y-1.5 flex-1 pr-4">
+                <div className="space-y-1.5 flex-1 min-w-0 pr-0 sm:pr-4">
                   <div className="flex items-center gap-2">
                     <span
                       className={`text-[10px] uppercase font-sans tracking-widest px-2 py-0.5 ${
@@ -269,7 +269,7 @@ export default function AdminQuestionManager({
                     </time>
                   </div>
 
-                  <p className="font-serif text-lg text-ink">
+                  <p className="font-serif text-lg text-ink break-words">
                     &ldquo;{q.question}&rdquo;
                   </p>
 
@@ -278,11 +278,11 @@ export default function AdminQuestionManager({
                   </span>
                 </div>
 
-                <div className="flex items-center gap-3 shrink-0 pt-2 sm:pt-0 border-t sm:border-t-0 border-rule/50">
+                <div className="flex items-center justify-end gap-2 shrink-0 pt-2 sm:pt-0 border-t sm:border-t-0 border-rule/50">
                   <button
                     type="button"
                     onClick={() => handleEditClick(q)}
-                    className="text-xs uppercase tracking-archive text-ink-muted hover:text-ink font-sans transition-colors"
+                    className="px-2.5 py-1.5 rounded-sm hover:bg-[#F3ECE0] text-xs uppercase tracking-archive text-ink-muted hover:text-ink font-sans transition-colors"
                   >
                     edit
                   </button>
@@ -290,7 +290,7 @@ export default function AdminQuestionManager({
                   <button
                     type="button"
                     onClick={() => handleDelete(q.id)}
-                    className="text-xs uppercase tracking-archive text-ink-faint hover:text-red-800 font-sans transition-colors"
+                    className="px-2.5 py-1.5 rounded-sm hover:bg-red-50 text-xs uppercase tracking-archive text-ink-faint hover:text-red-800 font-sans transition-colors"
                   >
                     delete
                   </button>

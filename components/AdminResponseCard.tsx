@@ -48,26 +48,26 @@ export default function AdminResponseCard({
   };
 
   return (
-    <article className="group py-6 border-b border-rule relative">
-      <div className="flex items-start justify-between gap-4">
+    <article className="group py-5 sm:py-6 border-b border-rule relative">
+      <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-3 sm:gap-4">
         {/* The Quote */}
-        <div className="flex-1 pr-4">
-          <p className="font-serif text-lg sm:text-xl text-ink leading-relaxed whitespace-pre-wrap">
+        <div className="flex-1 min-w-0 pr-0 sm:pr-4">
+          <p className="font-serif text-lg sm:text-xl text-ink leading-relaxed whitespace-pre-wrap break-words">
             &ldquo;{response.response}&rdquo;
           </p>
 
-          <div className="mt-3 flex items-center gap-3 text-[11px] text-ink-faint font-sans uppercase tracking-wider">
+          <div className="mt-2.5 sm:mt-3 flex items-center gap-3 text-[11px] text-ink-faint font-sans uppercase tracking-wider">
             <span>received at {formattedTime}</span>
           </div>
         </div>
 
         {/* Actions (Export Photo & Delete) */}
-        <div className="shrink-0 flex items-center gap-2">
+        <div className="shrink-0 flex items-center justify-between sm:justify-end gap-2.5 pt-2 sm:pt-0 border-t sm:border-t-0 border-rule/40 sm:border-transparent w-full sm:w-auto">
           {/* Post Photo Download Button */}
           <button
             type="button"
             onClick={() => setShowExportModal(true)}
-            className="inline-flex items-center gap-1.5 px-2.5 py-1 text-xs uppercase tracking-archive text-ink-muted hover:text-ink hover:bg-[#F3ECE0] border border-rule/70 hover:border-rule rounded-sm transition-all"
+            className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs uppercase tracking-archive text-ink-muted hover:text-ink hover:bg-[#F3ECE0] border border-rule/70 hover:border-rule rounded-sm transition-all"
             title="Export and download as social photo post"
           >
             <svg
@@ -83,12 +83,12 @@ export default function AdminResponseCard({
                 d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"
               />
             </svg>
-            <span className="hidden sm:inline">Post Photo</span>
+            <span>Post Photo</span>
             <span>↓</span>
           </button>
 
           {showConfirm ? (
-            <div className="flex items-center gap-2 bg-[#FAF7F0] p-1.5 border border-rule text-xs">
+            <div className="flex items-center gap-2 bg-[#FAF7F0] px-2.5 py-1.5 border border-rule text-xs">
               <span className="text-ink-muted text-[11px]">Remove?</span>
               <button
                 type="button"
@@ -110,7 +110,7 @@ export default function AdminResponseCard({
             <button
               type="button"
               onClick={() => setShowConfirm(true)}
-              className="opacity-0 group-hover:opacity-100 focus:opacity-100 focus:outline-none focus:ring-1 focus:ring-brass transition-opacity text-xs uppercase tracking-archive text-ink-faint hover:text-red-800 p-1"
+              className="opacity-100 sm:opacity-0 sm:group-hover:opacity-100 focus:opacity-100 focus:outline-none focus:ring-1 focus:ring-brass transition-opacity text-xs uppercase tracking-archive text-ink-faint hover:text-red-800 px-2 py-1.5"
               title="Delete this response from archive"
             >
               delete

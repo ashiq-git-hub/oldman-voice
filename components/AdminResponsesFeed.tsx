@@ -67,29 +67,31 @@ export default function AdminResponsesFeed({
         {responses.length > 0 && (
           <div>
             {showClearConfirm ? (
-              <div className="flex items-center gap-3 text-xs bg-[#FAF7F0] px-3 py-1 border border-rule">
+              <div className="flex flex-wrap items-center gap-2 sm:gap-3 text-xs bg-[#FAF7F0] px-3 py-1.5 border border-rule">
                 <span className="text-red-900">Delete all responses for today?</span>
-                <button
-                  type="button"
-                  onClick={handleClearAll}
-                  disabled={isDeletingAll}
-                  className="text-red-800 font-semibold uppercase tracking-wider hover:underline"
-                >
-                  {isDeletingAll ? "..." : "Confirm"}
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setShowClearConfirm(false)}
-                  className="text-ink-faint uppercase tracking-wider hover:text-ink"
-                >
-                  Cancel
-                </button>
+                <div className="flex items-center gap-3">
+                  <button
+                    type="button"
+                    onClick={handleClearAll}
+                    disabled={isDeletingAll}
+                    className="text-red-800 font-semibold uppercase tracking-wider hover:underline"
+                  >
+                    {isDeletingAll ? "..." : "Confirm"}
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setShowClearConfirm(false)}
+                    className="text-ink-faint uppercase tracking-wider hover:text-ink"
+                  >
+                    Cancel
+                  </button>
+                </div>
               </div>
             ) : (
               <button
                 type="button"
                 onClick={() => setShowClearConfirm(true)}
-                className="text-xs uppercase tracking-archive text-ink-faint hover:text-red-800 transition-colors"
+                className="text-xs uppercase tracking-archive text-ink-faint hover:text-red-800 transition-colors py-1"
               >
                 clear all responses
               </button>
@@ -99,8 +101,8 @@ export default function AdminResponsesFeed({
       </div>
 
       {/* Instagram Carousel Suite Toolbar */}
-      <div className="my-5 p-3.5 sm:p-4 bg-[#FAF7F0] border border-rule rounded-sm flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-        <div>
+      <div className="my-5 p-3.5 sm:p-4 bg-[#FAF7F0] border border-rule rounded-sm flex flex-col md:flex-row md:items-center justify-between gap-3">
+        <div className="min-w-0">
           <span className="text-[10px] sm:text-[11px] uppercase tracking-archive text-brass font-medium block">
             Instagram Carousel Suite
           </span>

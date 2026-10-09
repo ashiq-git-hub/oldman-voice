@@ -55,16 +55,16 @@ export default function AdminCarouselToolbar({
 
   return (
     <>
-      <div className="flex flex-wrap items-center gap-2 pt-3 sm:pt-0">
+      <div className="flex flex-wrap items-center gap-2 pt-2 sm:pt-0 w-full sm:w-auto">
         {/* Cover Slide Button */}
         <button
           type="button"
           onClick={() => setActiveModal("question")}
-          className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs uppercase tracking-archive text-ink font-medium bg-[#FAF7F0] hover:bg-[#F3ECE0] border border-rule/80 hover:border-ink/50 rounded-sm transition-all shadow-sm"
+          className="inline-flex items-center justify-center gap-1.5 px-3 py-2 sm:py-1.5 text-[11px] sm:text-xs uppercase tracking-archive text-ink font-medium bg-[#FAF7F0] hover:bg-[#F3ECE0] border border-rule/80 hover:border-ink/50 rounded-sm transition-all shadow-sm"
           title="Download Slide 1: The Old Man Asks (Question Cover)"
         >
           <svg
-            className="w-3.5 h-3.5 text-brass"
+            className="w-3.5 h-3.5 text-brass shrink-0"
             fill="none"
             stroke="currentColor"
             viewBox="0 0 24 24"
@@ -76,18 +76,18 @@ export default function AdminCarouselToolbar({
               d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"
             />
           </svg>
-          <span>Cover Slide ↓</span>
+          <span className="whitespace-nowrap">Cover Slide ↓</span>
         </button>
 
         {/* End Slide Button */}
         <button
           type="button"
           onClick={() => setActiveModal("outro")}
-          className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs uppercase tracking-archive text-ink font-medium bg-[#FAF7F0] hover:bg-[#F3ECE0] border border-rule/80 hover:border-ink/50 rounded-sm transition-all shadow-sm"
+          className="inline-flex items-center justify-center gap-1.5 px-3 py-2 sm:py-1.5 text-[11px] sm:text-xs uppercase tracking-archive text-ink font-medium bg-[#FAF7F0] hover:bg-[#F3ECE0] border border-rule/80 hover:border-ink/50 rounded-sm transition-all shadow-sm"
           title="Download End Slide: Follow & Link in Bio instructions"
         >
           <svg
-            className="w-3.5 h-3.5 text-brass"
+            className="w-3.5 h-3.5 text-brass shrink-0"
             fill="none"
             stroke="currentColor"
             viewBox="0 0 24 24"
@@ -99,7 +99,7 @@ export default function AdminCarouselToolbar({
               d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"
             />
           </svg>
-          <span>End Slide ↓</span>
+          <span className="whitespace-nowrap">End Slide ↓</span>
         </button>
 
         {/* Full Carousel Zip Button */}
@@ -107,18 +107,18 @@ export default function AdminCarouselToolbar({
           type="button"
           onClick={handleDownloadFullCarousel}
           disabled={isZipping}
-          className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs uppercase tracking-archive text-[#F4EFE6] font-medium bg-ink hover:bg-brass rounded-sm transition-all shadow-sm disabled:opacity-50"
+          className="inline-flex items-center justify-center gap-1.5 px-3 py-2 sm:py-1.5 text-[11px] sm:text-xs uppercase tracking-archive text-[#F4EFE6] font-medium bg-ink hover:bg-brass rounded-sm transition-all shadow-sm disabled:opacity-50"
           title="Download complete carousel bundle (.zip) with all slides ordered"
         >
           {isZipping ? (
             <>
-              <div className="w-3 h-3 border-2 border-parchment border-t-transparent rounded-full animate-spin" />
-              <span>Packaging {zipStatus}...</span>
+              <div className="w-3 h-3 border-2 border-parchment border-t-transparent rounded-full animate-spin shrink-0" />
+              <span className="whitespace-nowrap">Packaging {zipStatus}...</span>
             </>
           ) : (
             <>
               <svg
-                className="w-3.5 h-3.5"
+                className="w-3.5 h-3.5 shrink-0"
                 fill="none"
                 stroke="currentColor"
                 viewBox="0 0 24 24"
@@ -130,7 +130,7 @@ export default function AdminCarouselToolbar({
                   d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4"
                 />
               </svg>
-              <span>Full Carousel (.zip) ↓</span>
+              <span className="whitespace-nowrap">Full Carousel (.zip) ↓</span>
             </>
           )}
         </button>
@@ -138,11 +138,11 @@ export default function AdminCarouselToolbar({
         {/* Old Man Writes Studio Button */}
         <Link
           href="/admin/writes"
-          className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs uppercase tracking-archive text-[#49332F] font-medium bg-[#E8D3D1] hover:bg-[#DDBFB8] border border-[#C9A3A0] rounded-sm transition-all shadow-sm"
+          className="inline-flex items-center justify-center gap-1.5 px-3 py-2 sm:py-1.5 text-[11px] sm:text-xs uppercase tracking-archive text-[#49332F] font-medium bg-[#E8D3D1] hover:bg-[#DDBFB8] border border-[#C9A3A0] rounded-sm transition-all shadow-sm"
           title="Open Old Man Writes post studio"
         >
           <svg
-            className="w-3.5 h-3.5 text-[#745A55]"
+            className="w-3.5 h-3.5 text-[#745A55] shrink-0"
             fill="none"
             stroke="currentColor"
             viewBox="0 0 24 24"
@@ -154,7 +154,7 @@ export default function AdminCarouselToolbar({
               d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"
             />
           </svg>
-          <span>Old Man Writes ✎</span>
+          <span className="whitespace-nowrap">Old Man Writes ✎</span>
         </Link>
       </div>
 

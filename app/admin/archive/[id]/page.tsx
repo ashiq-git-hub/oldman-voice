@@ -69,7 +69,7 @@ export default async function AdminInquiryResponsesPage({
     <div className="min-h-screen flex flex-col bg-parchment text-ink paper-texture">
       <AdminHeader />
 
-      <main className="w-full max-w-4xl mx-auto px-6 sm:px-8 py-10 sm:py-14 flex-1">
+      <main className="w-full max-w-4xl mx-auto px-4 sm:px-8 py-7 sm:py-14 flex-1 min-w-0">
         <AdminInquiryResponsesView
           question={question}
           initialResponses={responses}

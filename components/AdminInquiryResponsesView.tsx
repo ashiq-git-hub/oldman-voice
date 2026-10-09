@@ -36,7 +36,7 @@ export default function AdminInquiryResponsesView({
       </div>
 
       {/* Inquiry Masthead Card */}
-      <section className="bg-[#FAF7F0] border border-rule p-6 sm:p-8 rounded-sm mb-8">
+      <section className="bg-[#FAF7F0] border border-rule p-4 sm:p-8 rounded-sm mb-6 sm:mb-8">
         <div className="flex items-center gap-2.5 mb-3">
           <span className="w-3.5 h-px bg-brass inline-block" />
           <time className="text-xs uppercase tracking-archive text-brass font-medium font-sans">
@@ -44,11 +44,11 @@ export default function AdminInquiryResponsesView({
           </time>
         </div>
 
-        <h1 className="font-serif text-2xl sm:text-3xl md:text-4xl text-ink font-normal leading-snug">
+        <h1 className="font-serif text-2xl sm:text-3xl md:text-4xl text-ink font-normal leading-snug break-words">
           &ldquo;{question.question}&rdquo;
         </h1>
 
-        <div className="mt-5 pt-4 border-t border-rule/60 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div className="mt-5 pt-4 border-t border-rule/60 flex flex-col md:flex-row md:items-center justify-between gap-4">
           <div className="flex items-center gap-3 text-xs font-sans">
             <span className="uppercase tracking-wider text-ink-muted">
               {responses.length}{" "}
@@ -80,7 +80,7 @@ export default function AdminInquiryResponsesView({
         </div>
 
         {responses.length === 0 ? (
-          <div className="bg-[#FAF7F0] border border-rule/70 p-12 text-center rounded-sm">
+          <div className="bg-[#FAF7F0] border border-rule/70 p-8 sm:p-12 text-center rounded-sm">
             <p className="font-serif italic text-lg text-ink-muted mb-2">
               No responses recorded for this date.
             </p>
@@ -89,7 +89,7 @@ export default function AdminInquiryResponsesView({
             </p>
           </div>
         ) : (
-          <div className="bg-[#FAF7F0] border border-rule px-6 sm:px-8 divide-y divide-rule/60 rounded-sm">
+          <div className="bg-[#FAF7F0] border border-rule px-4 sm:px-8 divide-y divide-rule/60 rounded-sm">
             {responses.map((resp) => (
               <AdminResponseCard
                 key={resp.id}

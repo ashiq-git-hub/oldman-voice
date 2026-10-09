@@ -27,7 +27,7 @@ export default function AdminArchiveView({ questions }: AdminArchiveViewProps) {
             return (
               <div
                 key={q.id}
-                className="group bg-[#FAF7F0] border border-rule/80 hover:border-brass/60 p-5 sm:p-7 rounded-sm transition-all duration-200 hover:shadow-sm"
+                className="group bg-[#FAF7F0] border border-rule/80 hover:border-brass/60 p-4 sm:p-7 rounded-sm transition-all duration-200 hover:shadow-sm"
               >
                 <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                   {/* Left Column: Date & Question */}
@@ -48,7 +48,7 @@ export default function AdminArchiveView({ questions }: AdminArchiveViewProps) {
                       href={`/admin/archive/${q.id}`}
                       className="group-hover:text-brass transition-colors duration-200 block"
                     >
-                      <h2 className="font-serif text-lg sm:text-2xl text-ink font-normal leading-snug">
+                      <h2 className="font-serif text-lg sm:text-2xl text-ink font-normal leading-snug break-words">
                         &ldquo;{q.question}&rdquo;
                       </h2>
                     </Link>
@@ -67,10 +67,10 @@ export default function AdminArchiveView({ questions }: AdminArchiveViewProps) {
                   </div>
 
                   {/* Right Column: Prominent View Button */}
-                  <div className="shrink-0 flex items-center justify-start sm:justify-end pt-2 sm:pt-0 border-t sm:border-t-0 border-rule/50">
+                  <div className="shrink-0 flex items-center justify-start sm:justify-end pt-3 sm:pt-0 border-t sm:border-t-0 border-rule/50 w-full sm:w-auto">
                     <Link
                       href={`/admin/archive/${q.id}`}
-                      className="vintage-btn inline-flex items-center gap-2 px-5 py-2.5 bg-ink text-parchment hover:bg-charcoal active:bg-ink-light text-xs font-sans font-medium uppercase tracking-[0.14em] shadow-sm transition-all"
+                      className="vintage-btn inline-flex items-center justify-center gap-2 w-full sm:w-auto px-5 py-2.5 bg-ink text-parchment hover:bg-charcoal active:bg-ink-light text-xs font-sans font-medium uppercase tracking-[0.14em] shadow-sm transition-all"
                       title={`View all ${q.response_count} responses for this date`}
                     >
                       <span>View</span>

@@ -17,9 +17,9 @@ export default async function AdminWritesPage() {
   }
 
   return (
-    <div className="min-h-screen bg-stone-100 flex flex-col">
+    <div className="min-h-screen bg-parchment text-ink paper-texture flex flex-col">
       <AdminHeader />
-      <main className="flex-1 max-w-7xl w-full mx-auto px-4 py-8 sm:px-6 lg:px-8">
+      <main className="flex-1 max-w-7xl w-full mx-auto px-2 sm:px-6 lg:px-8 py-4 sm:py-8 min-w-0">
         <AdminWritesStudio />
       </main>
     </div>

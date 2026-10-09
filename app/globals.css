@@ -159,3 +159,13 @@ body {
 ::-webkit-scrollbar-thumb:hover {
   background: #9A8358;
 }
+
+/* Minimal touch-friendly clean scroll utility */
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+

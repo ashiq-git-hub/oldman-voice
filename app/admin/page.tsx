@@ -74,9 +74,9 @@ export default async function AdminTodayPage() {
     <div className="min-h-screen flex flex-col bg-parchment text-ink paper-texture">
       <AdminHeader />
 
-      <main className="w-full max-w-3xl mx-auto px-6 sm:px-8 py-10 sm:py-14 flex-1">
+      <main className="w-full max-w-3xl mx-auto px-4 sm:px-8 py-7 sm:py-14 flex-1 min-w-0">
         {/* Today's Question Section */}
-        <section className="mb-10 pb-8 border-b border-rule">
+        <section className="mb-8 sm:mb-10 pb-6 sm:pb-8 border-b border-rule">
           <div className="flex items-center gap-3 mb-3">
             <span className="text-[11px] uppercase tracking-archive text-brass font-medium">
               Today&apos;s Active Inquiry
@@ -92,7 +92,7 @@ export default async function AdminTodayPage() {
           </div>
 
           {question ? (
-            <h1 className="font-serif text-2xl sm:text-3xl md:text-4xl text-ink font-normal leading-snug">
+            <h1 className="font-serif text-2xl sm:text-3xl md:text-4xl text-ink font-normal leading-snug break-words">
               &ldquo;{question.question}&rdquo;
             </h1>
           ) : (

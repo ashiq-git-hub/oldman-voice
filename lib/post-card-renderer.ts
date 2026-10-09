@@ -139,13 +139,26 @@ export async function ensureFontsLoaded(): Promise<void> {
 }
 
 /**
- * Loads an image from URL into an HTMLImageElement
+ * In-memory cache for paper texture assets to prevent redundant decoding and network latency.
+ */
+const imageCache = new Map<string, HTMLImageElement>();
+
+/**
+ * Loads an image from URL into an HTMLImageElement with in-memory caching.
  */
 function loadImage(src: string): Promise<HTMLImageElement> {
+  const cached = imageCache.get(src);
+  if (cached && cached.complete && cached.naturalWidth > 0) {
+    return Promise.resolve(cached);
+  }
+
   return new Promise((resolve, reject) => {
     const img = new Image();
     img.crossOrigin = "anonymous";
-    img.onload = () => resolve(img);
+    img.onload = () => {
+      imageCache.set(src, img);
+      resolve(img);
+    };
     img.onerror = (e) => reject(e);
     img.src = src;
   });

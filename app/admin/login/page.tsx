@@ -79,7 +79,7 @@ export default function AdminLoginPage() {
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               placeholder="owner@theoldman.keeps"
-              className="w-full bg-[#FAF7F0] border border-rule px-4 py-2.5 text-sm text-ink font-sans outline-none focus:border-brass focus-visible:ring-1 focus-visible:ring-brass transition-colors rounded-none placeholder:text-ink-faint/50"
+              className="w-full bg-[#FAF7F0] border border-rule px-4 py-2.5 text-base sm:text-sm text-ink font-sans outline-none focus:border-brass focus-visible:ring-1 focus-visible:ring-brass transition-colors rounded-none placeholder:text-ink-faint/50"
             />
           </div>
 
@@ -97,7 +97,7 @@ export default function AdminLoginPage() {
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               placeholder="••••••••••••"
-              className="w-full bg-[#FAF7F0] border border-rule px-4 py-2.5 text-sm text-ink font-sans outline-none focus:border-brass focus-visible:ring-1 focus-visible:ring-brass transition-colors rounded-none placeholder:text-ink-faint/50"
+              className="w-full bg-[#FAF7F0] border border-rule px-4 py-2.5 text-base sm:text-sm text-ink font-sans outline-none focus:border-brass focus-visible:ring-1 focus-visible:ring-brass transition-colors rounded-none placeholder:text-ink-faint/50"
             />
           </div>
 
