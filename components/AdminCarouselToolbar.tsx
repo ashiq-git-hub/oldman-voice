@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Link from "next/link";
 import { Question, ResponseItem } from "@/types/database";
 import PostDownloadModal from "./PostDownloadModal";
 import { exportFullCarouselZip } from "@/lib/carousel-exporter";
@@ -133,6 +134,28 @@ export default function AdminCarouselToolbar({
             </>
           )}
         </button>
+
+        {/* Old Man Writes Studio Button */}
+        <Link
+          href="/admin/writes"
+          className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs uppercase tracking-archive text-[#49332F] font-medium bg-[#E8D3D1] hover:bg-[#DDBFB8] border border-[#C9A3A0] rounded-sm transition-all shadow-sm"
+          title="Open Old Man Writes post studio"
+        >
+          <svg
+            className="w-3.5 h-3.5 text-[#745A55]"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={1.75}
+              d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"
+            />
+          </svg>
+          <span>Old Man Writes ✎</span>
+        </Link>
       </div>
 
       {/* Modal for Question Cover */}

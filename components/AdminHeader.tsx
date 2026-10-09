@@ -26,6 +26,7 @@ export default function AdminHeader() {
     { label: "Today", href: "/admin" },
     { label: "Archive", href: "/admin/archive" },
     { label: "Questions", href: "/admin/questions" },
+    { label: "Old Man Writes", href: "/admin/writes" },
   ];
 
   return (

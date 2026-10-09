@@ -1,6 +1,6 @@
 export type PostAspectRatio = "4:5" | "1:1" | "9:16";
 export type PostImageFormat = "image/png" | "image/jpeg";
-export type PostCardType = "response" | "question" | "outro";
+export type PostCardType = "response" | "question" | "outro" | "writes";
 
 export interface PostRenderOptions {
   text: string;
@@ -31,13 +31,26 @@ I’ll be here tomorrow too.
 
 @theoldman.keeps`;
 
-export function getPostDimensions(aspectRatio: PostAspectRatio): PostDimensions {
+export const DEFAULT_WRITES_TEXT = `I wanted to ask you
+if you remembered the rain
+that evening on the porch,
+but the moment passed
+like smoke through fingers.
+
+Sometimes the quietest things
+are the ones we carry longest.`;
+
+export function getPostDimensions(
+  aspectRatio: PostAspectRatio,
+  cardType?: PostCardType
+): PostDimensions {
+  const isWrites = cardType === "writes";
   switch (aspectRatio) {
     case "1:1":
       return {
         width: 1080,
         height: 1080,
-        bgUrl: "/post-bg-1-1.jpg",
+        bgUrl: isWrites ? "/post-bg-writes-1-1.jpg" : "/post-bg-1-1.jpg",
         topY: 160,
         topRuleY: 195,
         botRuleY: 885,
@@ -48,7 +61,7 @@ export function getPostDimensions(aspectRatio: PostAspectRatio): PostDimensions 
       return {
         width: 1080,
         height: 1920,
-        bgUrl: "/post-bg-9-16.jpg",
+        bgUrl: isWrites ? "/post-bg-writes-9-16.jpg" : "/post-bg-9-16.jpg",
         topY: 380,
         topRuleY: 430,
         botRuleY: 1490,
@@ -60,7 +73,7 @@ export function getPostDimensions(aspectRatio: PostAspectRatio): PostDimensions 
       return {
         width: 1080,
         height: 1350,
-        bgUrl: "/post-bg-4-5.jpg",
+        bgUrl: isWrites ? "/post-bg-writes-4-5.jpg" : "/post-bg-4-5.jpg",
         topY: 250,
         topRuleY: 292,
         botRuleY: 1041,
@@ -211,33 +224,41 @@ export async function renderPostToCanvas(
 ): Promise<void> {
   await ensureFontsLoaded();
 
-  const dims = getPostDimensions(options.aspectRatio);
+  const dims = getPostDimensions(options.aspectRatio, options.cardType);
   canvas.width = dims.width;
   canvas.height = dims.height;
 
   const ctx = canvas.getContext("2d");
   if (!ctx) throw new Error("Could not acquire 2D canvas context");
 
+  const isWrites = options.cardType === "writes";
+
   // 1. Draw paper texture background
   try {
     const bgImg = await loadImage(dims.bgUrl);
     ctx.drawImage(bgImg, 0, 0, dims.width, dims.height);
   } catch (err) {
-    console.warn("Failed to load background texture, falling back to parchment color:", err);
-    ctx.fillStyle = "#F3EFE7";
+    console.warn("Failed to load background texture, falling back to color:", err);
+    ctx.fillStyle = isWrites ? "#C9A3A0" : "#F3EFE7";
     ctx.fillRect(0, 0, dims.width, dims.height);
   }
 
   const contentW = dims.width - 2 * dims.marginX;
 
-  // Colors matching vintage_ink_02_original_ref_match
-  const colorMeta = "#A39B8E"; // delicate muted taupe/sand ink (RGB 163, 155, 142)
-  const colorRule = "#D7D0C3"; // soft thin parchment rule (RGB 215, 208, 195)
+  // Colors:
+  // For "Old Man Writes":
+  // - Background: Dusty rose (#C9A3A0)
+  // - Main writing: Deep warm brown (#49332F)
+  // - Header, date, divider lines, and footer: Muted brown (#745A55)
+  // For existing beige:
+  // - Meta: #A39B8E, Rule: #D7D0C3, Question: #48443B, Response: #1E1A17
+  const colorMeta = isWrites ? "#745A55" : "#A39B8E";
+  const colorRule = isWrites ? "#745A55" : "#D7D0C3";
   
   // Exact vintage ink tone for Question Cover from reference (RGB 72, 68, 59)
   const colorQuestionInk = "#48443B";
-  // Classic response ink
-  const colorResponseInk = "#1E1A17";
+  // Classic response ink (#49332F for writes, #1E1A17 for standard beige)
+  const colorResponseInk = isWrites ? "#49332F" : "#1E1A17";
 
   // 2. Top Header
   ctx.fillStyle = colorMeta;
@@ -251,6 +272,8 @@ export async function renderPostToCanvas(
     headerLeft = "THE OLD MAN ASKS";
   } else if (options.cardType === "outro") {
     headerLeft = "THE OLD MAN KEEPS";
+  } else if (options.cardType === "writes") {
+    headerLeft = "OLD MAN WRITES";
   }
 
   const headerRight = (options.dateStr || "TODAY").toUpperCase();
@@ -539,6 +562,123 @@ export async function renderPostToCanvas(
           curX += ctx.measureText(seg.text).width;
         }
         curY += block.height;
+      }
+    }
+
+  } else if (options.cardType === "writes") {
+    // --- OLD MAN WRITES: ORIGINAL WRITING SLIDE (Dusty Rose Palette) ---
+    // Typography: Cormorant Garamond Regular in deep warm brown #49332F
+    // Dynamic layout: auto-scales from 44px down to 21px to comfortably fit poems and reflections
+    const availableH = dims.botRuleY - dims.topRuleY;
+    const maxContentH = availableH - 50;
+
+    const candidateSizes =
+      options.aspectRatio === "1:1"
+        ? [38, 35, 32, 29, 26, 23, 20]
+        : options.aspectRatio === "9:16"
+        ? [44, 40, 36, 33, 30, 27, 24, 22]
+        : [44, 40, 36, 33, 30, 27, 24, 21]; // 4:5
+
+    let chosenFontSize = candidateSizes[candidateSizes.length - 1];
+    let chosenLines: Array<{ text: string; isGap: boolean }> = [];
+    let chosenLineHeight = Math.round(chosenFontSize * 1.54);
+    let chosenParagraphGap = Math.round(chosenFontSize * 0.85);
+
+    const rawParagraphs = options.text.split(/\r?\n/);
+
+    for (const size of candidateSizes) {
+      const lh = Math.round(size * 1.54);
+      const gap = Math.round(size * 0.85);
+      ctx.font = `${size}px "Cormorant Garamond", Georgia, serif`;
+
+      const lines: Array<{ text: string; isGap: boolean }> = [];
+
+      for (const rawLine of rawParagraphs) {
+        const trimmed = rawLine.trim();
+        if (!trimmed) {
+          if (lines.length > 0 && !lines[lines.length - 1].isGap) {
+            lines.push({ text: "", isGap: true });
+          }
+          continue;
+        }
+
+        const words = trimmed.split(/\s+/);
+        let curLine = "";
+
+        for (const w of words) {
+          const testLine = curLine ? `${curLine} ${w}` : w;
+          if (ctx.measureText(testLine).width <= contentW) {
+            curLine = testLine;
+          } else {
+            if (curLine) lines.push({ text: curLine, isGap: false });
+            curLine = w;
+          }
+        }
+        if (curLine) {
+          lines.push({ text: curLine, isGap: false });
+        }
+      }
+
+      while (lines.length > 0 && lines[lines.length - 1].isGap) {
+        lines.pop();
+      }
+
+      let testTotalH = 0;
+      for (const l of lines) {
+        testTotalH += l.isGap ? gap : lh;
+      }
+
+      if (testTotalH <= maxContentH) {
+        chosenFontSize = size;
+        chosenLines = lines;
+        chosenLineHeight = lh;
+        chosenParagraphGap = gap;
+        break;
+      }
+
+      if (size === candidateSizes[candidateSizes.length - 1]) {
+        chosenFontSize = size;
+        chosenLines = lines;
+        chosenLineHeight = lh;
+        chosenParagraphGap = gap;
+      }
+    }
+
+    let totalTextH = 0;
+    for (const l of chosenLines) {
+      totalTextH += l.isGap ? chosenParagraphGap : chosenLineHeight;
+    }
+
+    let startY = dims.topRuleY + Math.floor((availableH - totalTextH) / 2);
+    if (startY < dims.topRuleY + 28) startY = dims.topRuleY + 28;
+
+    ctx.fillStyle = colorResponseInk; // #49332F
+    ctx.textBaseline = "top";
+
+    let curY = startY;
+
+    for (const item of chosenLines) {
+      if (item.isGap) {
+        curY += chosenParagraphGap;
+      } else {
+        if (item.text.includes("*")) {
+          const parts = item.text.split(/(\*[^*]+\*)/g);
+          let curX = dims.marginX;
+          for (const part of parts) {
+            if (!part) continue;
+            const isItalic = part.startsWith("*") && part.endsWith("*");
+            const str = isItalic ? part.slice(1, -1) : part;
+            ctx.font = isItalic
+              ? `italic ${chosenFontSize}px "Cormorant Garamond", Georgia, serif`
+              : `${chosenFontSize}px "Cormorant Garamond", Georgia, serif`;
+            ctx.fillText(str, curX, curY);
+            curX += ctx.measureText(str).width;
+          }
+        } else {
+          ctx.font = `${chosenFontSize}px "Cormorant Garamond", Georgia, serif`;
+          ctx.fillText(item.text, dims.marginX, curY);
+        }
+        curY += chosenLineHeight;
       }
     }
 

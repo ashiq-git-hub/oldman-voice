@@ -7,6 +7,7 @@ import {
   PostCardType,
   renderPostToCanvas,
   DEFAULT_OUTRO_TEXT,
+  DEFAULT_WRITES_TEXT,
 } from "@/lib/post-card-renderer";
 import { formatDateString } from "@/components/QuestionCard";
 import { getTodayDateString } from "@/lib/mock-store";
@@ -46,6 +47,7 @@ export default function PostDownloadModal({
     if (text) return text;
     if (response) return response.response;
     if (cardType === "outro") return DEFAULT_OUTRO_TEXT;
+    if (cardType === "writes") return DEFAULT_WRITES_TEXT;
     return "";
   }, [text, response, cardType]);
 
@@ -122,6 +124,7 @@ export default function PostDownloadModal({
       let prefix = "response";
       if (cardType === "question") prefix = "01-theoldman-asks";
       else if (cardType === "outro") prefix = "end-theoldman-keeps";
+      else if (cardType === "writes") prefix = "writes-theoldman-keeps";
 
       const filename = `theoldman-keeps-${cleanDate}-${prefix}-${aspectRatio.replace(":", "x")}.${extension}`;
 
@@ -185,6 +188,8 @@ export default function PostDownloadModal({
       ? "Slide 1: Question Cover Post"
       : cardType === "outro"
       ? "End Slide: Follow & Instruction CTA"
+      : cardType === "writes"
+      ? "Old Man Writes: Original Writing Post"
       : "Reader Response Post");
 
   return (
@@ -204,7 +209,7 @@ export default function PostDownloadModal({
             <div className="flex items-center gap-2">
               <span className="w-2.5 h-px bg-brass inline-block" />
               <p className="text-[10px] sm:text-[11px] uppercase tracking-archive text-brass font-medium">
-                Instagram Carousel Post Generator
+                {cardType === "writes" ? "Old Man Writes Generator" : "Instagram Carousel Post Generator"}
               </p>
             </div>
             <h2 className="font-serif text-lg sm:text-xl text-ink font-normal">
@@ -265,6 +270,22 @@ export default function PostDownloadModal({
                   value={currentText}
                   onChange={(e) => setCurrentText(e.target.value)}
                   className="w-full text-xs font-serif p-2.5 bg-[#F4EFE6] border border-rule rounded-sm text-ink outline-none focus:border-brass leading-relaxed resize-none"
+                />
+              </div>
+            )}
+
+            {/* If writes card, allow editing original writing */}
+            {cardType === "writes" && (
+              <div>
+                <label className="block text-[11px] uppercase tracking-wider text-ink-faint font-sans mb-1 font-medium">
+                  Original Writing (Poem / Journal)
+                </label>
+                <textarea
+                  rows={6}
+                  value={currentText}
+                  onChange={(e) => setCurrentText(e.target.value)}
+                  className="w-full text-xs font-serif p-2.5 bg-[#FAF7F0] border border-rule rounded-sm text-ink outline-none focus:border-[#745A55] leading-relaxed resize-none"
+                  placeholder="Enter or paste original writing..."
                 />
               </div>
             )}
