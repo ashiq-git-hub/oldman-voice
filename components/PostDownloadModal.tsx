@@ -8,6 +8,7 @@ import {
   renderPostToCanvas,
   DEFAULT_OUTRO_TEXT,
   DEFAULT_WRITES_TEXT,
+  WritesColorPreset,
 } from "@/lib/post-card-renderer";
 import { formatDateString } from "@/components/QuestionCard";
 import { getTodayDateString } from "@/lib/mock-store";
@@ -24,6 +25,7 @@ interface PostDownloadModalProps {
   } | null;
   dateStr?: string;
   title?: string;
+  writesColorPreset?: WritesColorPreset;
 }
 
 export default function PostDownloadModal({
@@ -34,10 +36,12 @@ export default function PostDownloadModal({
   response,
   dateStr,
   title,
+  writesColorPreset = "dusty-rose",
 }: PostDownloadModalProps) {
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const [aspectRatio, setAspectRatio] = useState<PostAspectRatio>("4:5");
   const [format, setFormat] = useState<PostImageFormat>("image/png");
+  const [colorPreset, setColorPreset] = useState<WritesColorPreset>(writesColorPreset);
   const [isRendering, setIsRendering] = useState(false);
   const [isDownloading, setIsDownloading] = useState(false);
   const [copied, setCopied] = useState(false);
@@ -94,13 +98,14 @@ export default function PostDownloadModal({
         aspectRatio,
         cardType,
         format,
+        writesColorPreset: colorPreset,
       });
     } catch (err) {
       console.error("Canvas render error:", err);
     } finally {
       setIsRendering(false);
     }
-  }, [currentText, effectiveDateStr, aspectRatio, cardType, format]);
+  }, [currentText, effectiveDateStr, aspectRatio, cardType, format, colorPreset]);
 
   useEffect(() => {
     if (isOpen) {

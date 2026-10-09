@@ -4,6 +4,8 @@ import { useState, useRef, useEffect, useCallback, useMemo } from "react";
 import {
   PostAspectRatio,
   PostImageFormat,
+  WritesColorPreset,
+  WRITES_COLOR_PRESETS,
   renderPostToCanvas,
   DEFAULT_WRITES_TEXT,
 } from "@/lib/post-card-renderer";
@@ -51,6 +53,7 @@ export default function AdminWritesStudio() {
   // Form State
   const [text, setText] = useState<string>(DEFAULT_WRITES_TEXT);
   const [selectedDate, setSelectedDate] = useState<string>(getTodayDateString());
+  const [colorPreset, setColorPreset] = useState<WritesColorPreset>("dusty-rose");
   const [aspectRatio, setAspectRatio] = useState<PostAspectRatio>("4:5");
   const [format, setFormat] = useState<PostImageFormat>("image/png");
 
@@ -106,13 +109,14 @@ export default function AdminWritesStudio() {
         aspectRatio,
         cardType: "writes",
         format,
+        writesColorPreset: colorPreset,
       });
     } catch (err) {
       console.error("Canvas render error:", err);
     } finally {
       setIsRendering(false);
     }
-  }, [text, formattedDate, aspectRatio, format]);
+  }, [text, formattedDate, aspectRatio, format, colorPreset]);
 
   // Trigger render when inputs change
   useEffect(() => {
@@ -133,7 +137,7 @@ export default function AdminWritesStudio() {
         .replace(/[^a-zA-Z0-9]/g, "-")
         .toLowerCase();
 
-      const filename = `theoldman-keeps-writes-${cleanDate}-${aspectRatio.replace(":", "x")}.${extension}`;
+      const filename = `theoldman-keeps-writes-${colorPreset}-${cleanDate}-${aspectRatio.replace(":", "x")}.${extension}`;
 
       canvas.toBlob(
         (blob) => {
@@ -205,13 +209,23 @@ export default function AdminWritesStudio() {
               Old Man Writes
             </h1>
             <p className="text-xs sm:text-sm text-ink-muted font-sans mt-1">
-              Enter your poems, journal entries, and reflections. Renders finished high-resolution Instagram posts on tactile dusty rose stationery.
+              Enter your poems, journal entries, and reflections. Renders finished high-resolution Instagram posts on tactile vintage stationery.
             </p>
           </div>
           <div className="flex items-center gap-2 pt-1 sm:pt-0">
-            <span className="inline-flex items-center gap-1.5 px-2.5 py-1 text-[11px] bg-[#E8D3D1] border border-[#C9A3A0] text-[#49332F] rounded-sm font-sans font-medium">
-              <span className="w-2 h-2 rounded-full bg-[#C9A3A0]" />
-              Dusty Rose Palette (#C9A3A0)
+            <span
+              className="inline-flex items-center gap-1.5 px-2.5 py-1 text-[11px] border rounded-sm font-sans font-medium transition-all"
+              style={{
+                backgroundColor: WRITES_COLOR_PRESETS[colorPreset].bgHex,
+                color: WRITES_COLOR_PRESETS[colorPreset].textHex,
+                borderColor: WRITES_COLOR_PRESETS[colorPreset].dateDividerHex,
+              }}
+            >
+              <span
+                className="w-2 h-2 rounded-full border border-black/15 shrink-0"
+                style={{ backgroundColor: WRITES_COLOR_PRESETS[colorPreset].textHex }}
+              />
+              {WRITES_COLOR_PRESETS[colorPreset].name} ({WRITES_COLOR_PRESETS[colorPreset].bgHex})
             </span>
           </div>
         </div>
@@ -241,6 +255,89 @@ export default function AdminWritesStudio() {
               onChange={(e) => setSelectedDate(e.target.value)}
               className="w-full text-base sm:text-xs font-sans px-3 py-2 bg-[#F4EFE6] border border-rule rounded-sm text-ink outline-none focus:border-[#745A55] transition-colors"
             />
+          </div>
+
+          {/* Colour Preset Swatches */}
+          <div>
+            <div className="flex items-center justify-between mb-1.5">
+              <label className="text-[11px] uppercase tracking-wider text-ink-faint font-sans font-medium">
+                Colour Preset
+              </label>
+              <span className="text-[11px] font-serif text-ink-muted">
+                {WRITES_COLOR_PRESETS[colorPreset].name}
+              </span>
+            </div>
+            <div className="grid grid-cols-3 gap-2">
+              {(
+                [
+                  {
+                    id: "dusty-rose" as WritesColorPreset,
+                    name: "Dusty Rose",
+                    bgHex: "#C9A3A0",
+                    textHex: "#49332F",
+                    borderHex: "#745A55",
+                  },
+                  {
+                    id: "vanilla-cream" as WritesColorPreset,
+                    name: "Vanilla Cream",
+                    bgHex: "#FCECCF",
+                    textHex: "#442D1D",
+                    borderHex: "#B7A184",
+                  },
+                  {
+                    id: "coffee-brown" as WritesColorPreset,
+                    name: "Coffee Brown",
+                    bgHex: "#442D1D",
+                    textHex: "#FCECCF",
+                    borderHex: "#D4BFA0",
+                  },
+                ] as const
+              ).map((preset) => {
+                const isSelected = colorPreset === preset.id;
+                return (
+                  <button
+                    key={preset.id}
+                    type="button"
+                    onClick={() => setColorPreset(preset.id)}
+                    className={`group relative flex flex-col items-start p-2 rounded-sm border transition-all text-left ${
+                      isSelected
+                        ? "ring-2 ring-[#49332F] border-transparent shadow-sm bg-white/70"
+                        : "border-rule/80 hover:border-ink/40 bg-[#FAF7F0] hover:bg-[#F6F1E6]"
+                    }`}
+                  >
+                    <div className="flex items-center gap-1.5 w-full mb-1.5">
+                      <div
+                        className="w-4 h-4 rounded-full border shadow-inner flex items-center justify-center shrink-0"
+                        style={{
+                          backgroundColor: preset.bgHex,
+                          borderColor: preset.borderHex,
+                        }}
+                      >
+                        <span
+                          className="w-1.5 h-1.5 rounded-full"
+                          style={{ backgroundColor: preset.textHex }}
+                        />
+                      </div>
+                      <span
+                        className={`text-[11px] font-medium font-sans truncate ${
+                          isSelected ? "text-ink font-semibold" : "text-ink-muted"
+                        }`}
+                      >
+                        {preset.name}
+                      </span>
+                    </div>
+                    <div className="flex items-center justify-between w-full">
+                      <span className="text-[9px] text-ink-faint font-mono">
+                        {preset.bgHex}
+                      </span>
+                      {isSelected && (
+                        <span className="text-[10px] text-[#49332F] font-bold">✓</span>
+                      )}
+                    </div>
+                  </button>
+                );
+              })}
+            </div>
           </div>
 
           {/* Quick Preset Pills */}
@@ -419,7 +516,9 @@ export default function AdminWritesStudio() {
                       d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"
                     />
                   </svg>
-                  <span>Download Finished Post (1080 × 1350)</span>
+                  <span>
+                    Download Finished Post ({aspectRatio === "1:1" ? "1080 × 1080" : aspectRatio === "9:16" ? "1080 × 1920" : "1080 × 1350"})
+                  </span>
                 </>
               )}
             </button>
@@ -455,10 +554,10 @@ export default function AdminWritesStudio() {
         </div>
 
         {/* Right Column: Live High-Resolution Preview (7 cols) */}
-        <div className="lg:col-span-7 flex flex-col items-center justify-center bg-[#E5D7D5]/70 border border-rule/80 rounded-sm p-3 sm:p-8 min-h-[320px] sm:min-h-[500px] overflow-hidden relative shadow-inner">
+        <div className="lg:col-span-7 flex flex-col items-center justify-center bg-[#EFE9DF]/80 border border-rule/80 rounded-sm p-3 sm:p-8 min-h-[320px] sm:min-h-[500px] overflow-hidden relative shadow-inner">
           {/* Live rendering status overlay */}
           {isRendering && (
-            <div className="absolute inset-0 bg-[#E5D7D5]/80 backdrop-blur-[1px] flex items-center justify-center z-20">
+            <div className="absolute inset-0 bg-[#EFE9DF]/85 backdrop-blur-[1px] flex items-center justify-center z-20">
               <div className="flex items-center gap-2 text-xs uppercase tracking-wider text-[#49332F]">
                 <div className="w-3.5 h-3.5 border-2 border-[#745A55] border-t-transparent rounded-full animate-spin" />
                 <span>Rendering archival stationery...</span>
@@ -475,7 +574,7 @@ export default function AdminWritesStudio() {
           </div>
 
           <p className="mt-3 sm:mt-4 text-[10px] sm:text-[11px] text-[#745A55] tracking-wider uppercase font-sans select-none text-center">
-            Live Preview · Cormorant Garamond · Dusty Rose (#C9A3A0)
+            Live Preview · Cormorant Garamond · {WRITES_COLOR_PRESETS[colorPreset].name} ({WRITES_COLOR_PRESETS[colorPreset].bgHex})
           </p>
         </div>
       </div>

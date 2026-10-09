@@ -2,6 +2,44 @@ export type PostAspectRatio = "4:5" | "1:1" | "9:16";
 export type PostImageFormat = "image/png" | "image/jpeg";
 export type PostCardType = "response" | "question" | "outro" | "writes";
 
+export type WritesColorPreset = "dusty-rose" | "vanilla-cream" | "coffee-brown";
+
+export interface WritesColorTheme {
+  id: WritesColorPreset;
+  name: string;
+  bgHex: string;
+  textHex: string;
+  headerFooterHex: string;
+  dateDividerHex: string;
+}
+
+export const WRITES_COLOR_PRESETS: Record<WritesColorPreset, WritesColorTheme> = {
+  "dusty-rose": {
+    id: "dusty-rose",
+    name: "Dusty Rose",
+    bgHex: "#C9A3A0",
+    textHex: "#49332F",
+    headerFooterHex: "#745A55",
+    dateDividerHex: "#745A55",
+  },
+  "vanilla-cream": {
+    id: "vanilla-cream",
+    name: "Vanilla Cream",
+    bgHex: "#FCECCF",
+    textHex: "#442D1D",
+    headerFooterHex: "#745A55",
+    dateDividerHex: "#B7A184",
+  },
+  "coffee-brown": {
+    id: "coffee-brown",
+    name: "Coffee Brown",
+    bgHex: "#442D1D",
+    textHex: "#FCECCF",
+    headerFooterHex: "#D4BFA0",
+    dateDividerHex: "#B7A184",
+  },
+};
+
 export interface PostRenderOptions {
   text: string;
   dateStr: string;
@@ -9,6 +47,7 @@ export interface PostRenderOptions {
   cardType?: PostCardType;
   customHeader?: string;
   format?: PostImageFormat;
+  writesColorPreset?: WritesColorPreset;
 }
 
 export interface PostDimensions {
@@ -42,15 +81,21 @@ are the ones we carry longest.`;
 
 export function getPostDimensions(
   aspectRatio: PostAspectRatio,
-  cardType?: PostCardType
+  cardType?: PostCardType,
+  writesColorPreset?: WritesColorPreset
 ): PostDimensions {
   const isWrites = cardType === "writes";
+  const presetKey = writesColorPreset || "dusty-rose";
+  let writesBgPrefix = "rose";
+  if (presetKey === "vanilla-cream") writesBgPrefix = "cream";
+  else if (presetKey === "coffee-brown") writesBgPrefix = "coffee";
+
   switch (aspectRatio) {
     case "1:1":
       return {
         width: 1080,
         height: 1080,
-        bgUrl: isWrites ? "/post-bg-writes-1-1.jpg" : "/post-bg-1-1.jpg",
+        bgUrl: isWrites ? `/post-bg-writes-${writesBgPrefix}-1-1.jpg` : "/post-bg-1-1.jpg",
         topY: 160,
         topRuleY: 195,
         botRuleY: 885,
@@ -61,7 +106,7 @@ export function getPostDimensions(
       return {
         width: 1080,
         height: 1920,
-        bgUrl: isWrites ? "/post-bg-writes-9-16.jpg" : "/post-bg-9-16.jpg",
+        bgUrl: isWrites ? `/post-bg-writes-${writesBgPrefix}-9-16.jpg` : "/post-bg-9-16.jpg",
         topY: 380,
         topRuleY: 430,
         botRuleY: 1490,
@@ -73,7 +118,7 @@ export function getPostDimensions(
       return {
         width: 1080,
         height: 1350,
-        bgUrl: isWrites ? "/post-bg-writes-4-5.jpg" : "/post-bg-4-5.jpg",
+        bgUrl: isWrites ? `/post-bg-writes-${writesBgPrefix}-4-5.jpg` : "/post-bg-4-5.jpg",
         topY: 250,
         topRuleY: 292,
         botRuleY: 1041,
@@ -237,7 +282,7 @@ export async function renderPostToCanvas(
 ): Promise<void> {
   await ensureFontsLoaded();
 
-  const dims = getPostDimensions(options.aspectRatio, options.cardType);
+  const dims = getPostDimensions(options.aspectRatio, options.cardType, options.writesColorPreset);
   canvas.width = dims.width;
   canvas.height = dims.height;
 
@@ -245,6 +290,7 @@ export async function renderPostToCanvas(
   if (!ctx) throw new Error("Could not acquire 2D canvas context");
 
   const isWrites = options.cardType === "writes";
+  const writesTheme = WRITES_COLOR_PRESETS[options.writesColorPreset || "dusty-rose"];
 
   // 1. Draw paper texture background
   try {
@@ -252,7 +298,7 @@ export async function renderPostToCanvas(
     ctx.drawImage(bgImg, 0, 0, dims.width, dims.height);
   } catch (err) {
     console.warn("Failed to load background texture, falling back to color:", err);
-    ctx.fillStyle = isWrites ? "#C9A3A0" : "#F3EFE7";
+    ctx.fillStyle = isWrites ? writesTheme.bgHex : "#F3EFE7";
     ctx.fillRect(0, 0, dims.width, dims.height);
   }
 
@@ -260,21 +306,24 @@ export async function renderPostToCanvas(
 
   // Colors:
   // For "Old Man Writes":
-  // - Background: Dusty rose (#C9A3A0)
-  // - Main writing: Deep warm brown (#49332F)
-  // - Header, date, divider lines, and footer: Muted brown (#745A55)
+  // - Background: writesTheme.bgHex
+  // - Main writing: writesTheme.textHex
+  // - Header & Footer: writesTheme.headerFooterHex
+  // - Date & Divider Rules: writesTheme.dateDividerHex
   // For existing beige:
   // - Meta: #A39B8E, Rule: #D7D0C3, Question: #48443B, Response: #1E1A17
-  const colorMeta = isWrites ? "#745A55" : "#A39B8E";
-  const colorRule = isWrites ? "#745A55" : "#D7D0C3";
+  const colorHeader = isWrites ? writesTheme.headerFooterHex : "#A39B8E";
+  const colorDate = isWrites ? writesTheme.dateDividerHex : "#A39B8E";
+  const colorRule = isWrites ? writesTheme.dateDividerHex : "#D7D0C3";
+  const colorFooter = isWrites ? writesTheme.headerFooterHex : "#A39B8E";
   
   // Exact vintage ink tone for Question Cover from reference (RGB 72, 68, 59)
   const colorQuestionInk = "#48443B";
-  // Classic response ink (#49332F for writes, #1E1A17 for standard beige)
-  const colorResponseInk = isWrites ? "#49332F" : "#1E1A17";
+  // Classic response ink (writesTheme.textHex for writes, #1E1A17 for standard beige)
+  const colorResponseInk = isWrites ? writesTheme.textHex : "#1E1A17";
 
   // 2. Top Header
-  ctx.fillStyle = colorMeta;
+  ctx.fillStyle = colorHeader;
   ctx.textBaseline = "top";
   ctx.font = '21px "Cormorant Garamond", Georgia, serif';
 
@@ -292,6 +341,8 @@ export async function renderPostToCanvas(
   const headerRight = (options.dateStr || "TODAY").toUpperCase();
 
   drawTrackedText(ctx, headerLeft, dims.marginX, dims.topY, 3.5, "left");
+
+  ctx.fillStyle = colorDate;
   drawTrackedText(ctx, headerRight, dims.width - dims.marginX, dims.topY, 3.0, "right");
 
   // 3. Horizontal Rules
@@ -309,7 +360,7 @@ export async function renderPostToCanvas(
   ctx.stroke();
 
   // 4. Footer ("theoldman.keeps")
-  ctx.fillStyle = colorMeta;
+  ctx.fillStyle = colorFooter;
   ctx.font = '22px "Cormorant Garamond", Georgia, serif';
   drawTrackedText(ctx, "theoldman.keeps", dims.marginX, dims.botY, 3.2, "left");
 
